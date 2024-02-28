@@ -4,11 +4,13 @@ import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.hud.InGameHud
 import gg.norisk.subwaysurfers.client.input.KeyboardInput
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStopLifeCycle
 import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.command.StartCommand
+import gg.norisk.subwaysurfers.server.listener.GameStopListener
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
 import gg.norisk.subwaysurfers.server.listener.ScreenListener
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
@@ -48,9 +50,11 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         ClientAnimationListener.init()
         GameOverListener.init()
         ScreenListener.init()
+        GameStopListener.init()
         ShaderManager.init()
         StructureManager.initClient()
         ClientGameStartLifeCycle.init()
+        ClientGameStopLifeCycle.init()
         devCommands()
     }
 

@@ -114,7 +114,7 @@ object MovementInputListener {
     /** check for potential loss, depending on current punish ticks */
     private fun ServerPlayerEntity.checkGameOver() {
         if (punishTicks > 70) {
-            StartCommand.handleGameStop(this)
+            GameStopListener.handleGameStop(this)
         }
     }
 

@@ -57,21 +57,6 @@ object StartCommand {
         }
     }
 
-    fun handleGameStop(player: ServerPlayerEntity) {
-        gameOverScreenS2C.send(Unit, player)
-        player.isSubwaySurfers = false
-        player.coins = 0
-        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = 0.1
-        player.rail = 1
-        RailWorldManager.removePlayer(player)
-        val entites = player.serverWorld.iterateEntities().toList()
-        for (entity in entites) {
-            if (entity is UUIDMarker && entity.owner == player.uuid) {
-                entity.discard()
-            }
-        }
-    }
-
     fun handleStartGame(
         player: ServerPlayerEntity,
         isEnabled: Boolean = true,
