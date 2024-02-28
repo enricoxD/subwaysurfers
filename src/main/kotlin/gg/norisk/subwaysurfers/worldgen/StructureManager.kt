@@ -2,8 +2,13 @@ package gg.norisk.subwaysurfers.worldgen
 
 import com.google.common.cache.CacheBuilder
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
+import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate
+import gg.norisk.subwaysurfers.extensions.toStack
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_WORLD_TICK
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndWorldTick
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.datafixer.DataFixTypes
@@ -20,10 +25,12 @@ import net.minecraft.util.math.Vec3i
 import net.silkmc.silk.commands.clientCommand
 import net.silkmc.silk.commands.player
 import java.io.IOException
+import java.util.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
 
-object StructureManager {
+object StructureManager : EndWorldTick {
+    var patternGenerator: PatternGenerator? = null
     private val structureTemplates =
         CacheBuilder.newBuilder().expireAfterAccess(5.minutes.toJavaDuration()).build<String, StructureTemplate>()
 
@@ -36,6 +43,30 @@ object StructureManager {
                     }
                 }
             }
+            clientCommand("fakestructure") {
+                runs {
+                    val player = this.source.player
+                    val startPos = player.blockPos
+                    patternGenerator = PatternGenerator(
+                        startPos = startPos!!.add(10, 0, 0),
+                        patternStack = Stack<Stack<String>>().apply {
+                            add(
+                                listOf(
+                                    "plains_small_house_1",
+                                    "plains_small_house_2",
+                                    "plains_small_house_3",
+                                    "plains_small_house_4",
+                                    "plains_small_house_5",
+                                    "plains_small_house_6",
+                                    "plains_small_house_7",
+                                    "plains_small_house_8",
+                                ).toStack()
+                            )
+                        }
+                    )
+                }
+            }
+            END_WORLD_TICK.register(this)
         }
     }
 
@@ -93,5 +124,9 @@ object StructureManager {
             DataFixTypes.STRUCTURE.update(Schemas.getFixer(), nbtCompound, i)
         )
         return structureTemplate
+    }
+
+    override fun onEndTick(world: ClientWorld?) {
+        patternGenerator?.tick(MinecraftClient.getInstance().player!!)
     }
 }
