@@ -60,7 +60,7 @@ class CoinEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEntit
 
     // Apply player-controlled movement
     override fun travel(pos: Vec3d) {
-        super.travel(pos)
+
     }
 
     // Get the controlling passenger

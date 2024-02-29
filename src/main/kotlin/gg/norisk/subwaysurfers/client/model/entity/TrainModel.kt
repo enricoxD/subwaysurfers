@@ -11,4 +11,8 @@ class TrainModel : DefaultedEntityGeoModel<TrainEntity>("train".toId()) {
     override fun getRenderType(animatable: TrainEntity, texture: Identifier): RenderLayer {
         return RenderLayer.getEntityTranslucent(getTextureResource(animatable))
     }
+
+    override fun getTextureResource(animatable: TrainEntity): Identifier {
+        return "textures/entity/train_${animatable.variation}.png".toId()
+    }
 }

@@ -7,6 +7,7 @@ import gg.norisk.subwaysurfers.extensions.next
 import gg.norisk.subwaysurfers.registry.EntityRegistry
 import io.wispforest.owo.ui.core.Color
 import net.minecraft.block.BlockState
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
@@ -80,6 +81,27 @@ class BuilderItem(settings: Settings) : Item(settings) {
         }
 
         return ActionResult.success(world.isClient)
+    }
+
+    override fun useOnEntity(
+        itemStack: ItemStack,
+        playerEntity: PlayerEntity,
+        livingEntity: LivingEntity,
+        hand: Hand
+    ): ActionResult {
+        if (itemStack.action() == Action.TRAIN || itemStack.action() == Action.DRIVEABLE_TRAIN && livingEntity is TrainEntity) {
+            if (!playerEntity.world.isClient && livingEntity.isAlive) {
+                val train = livingEntity as TrainEntity
+                train.variation = if (train.variation + 1 >= TrainEntity.TRAIN_TYPES) {
+                    0
+                } else {
+                    train.variation + 1
+                }
+            }
+            return ActionResult.success(playerEntity.world.isClient)
+        } else {
+            return ActionResult.PASS
+        }
     }
 
     private fun ItemStack.action(): Action {

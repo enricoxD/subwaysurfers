@@ -29,6 +29,14 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
     override var owner: UUID? = null
 
+    var variation: Int
+        get() {
+            return this.dataTracker.get(TYPE)
+        }
+        set(value) {
+            this.dataTracker.set(TYPE, value)
+        }
+
     var shouldDrive: Boolean
         get() {
             return this.dataTracker.get(DRIVE)
@@ -44,16 +52,19 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
     override fun initDataTracker() {
         super.initDataTracker()
         this.dataTracker.startTracking(DRIVE, false)
+        this.dataTracker.startTracking(TYPE, 1)
     }
 
     override fun writeCustomDataToNbt(nbtCompound: NbtCompound) {
         super.writeCustomDataToNbt(nbtCompound)
         nbtCompound.putBoolean("shouldDrive", shouldDrive)
+        nbtCompound.putInt("Variation", variation)
     }
 
     override fun readCustomDataFromNbt(nbtCompound: NbtCompound) {
         super.readCustomDataFromNbt(nbtCompound)
         shouldDrive = nbtCompound.getBoolean("shouldDrive")
+        variation = nbtCompound.getInt("Variation")
     }
 
     override fun getBodyYaw(): Float = 180f
@@ -61,8 +72,11 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
     override fun getYaw(): Float = 180f
 
     companion object {
+        val TRAIN_TYPES = 2
         private val DRIVE: TrackedData<Boolean> =
             DataTracker.registerData(TrainEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+        private val TYPE: TrackedData<Int> =
+            DataTracker.registerData(TrainEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 
         fun LivingEntity.handleDiscard(owner: UUID?) {
             val player = world.getPlayerByUuid(owner ?: return)

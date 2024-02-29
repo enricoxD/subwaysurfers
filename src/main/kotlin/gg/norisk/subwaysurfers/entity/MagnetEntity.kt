@@ -5,13 +5,10 @@ import gg.norisk.subwaysurfers.subwaysurfers.isMagnetic
 import kotlinx.coroutines.Job
 import net.minecraft.block.BlockState
 import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.passive.AnimalEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
@@ -35,17 +32,6 @@ class MagnetEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnt
 
     init {
         this.ignoreCameraFrustum = true
-    }
-
-    // Let the player ride the entity
-    override fun interactMob(player: PlayerEntity, hand: Hand): ActionResult {
-        if (!this.hasPassengers()) {
-            player.startRiding(this)
-
-            return super.interactMob(player, hand)
-        }
-
-        return super.interactMob(player, hand)
     }
 
     override fun tick() {
@@ -72,32 +58,6 @@ class MagnetEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnt
 
     // Apply player-controlled movement
     override fun travel(pos: Vec3d) {
-        if (this.isAlive) {
-            if (this.hasPassengers()) {
-                val passenger = controllingPassenger
-                this.prevYaw = yaw
-                this.prevPitch = pitch
-
-                yaw = passenger!!.yaw
-                pitch = passenger.pitch * 0.5f
-                setRotation(yaw, pitch)
-
-                this.bodyYaw = this.yaw
-                this.headYaw = this.bodyYaw
-                val x = passenger.sidewaysSpeed * 0.5f
-                var z = passenger.forwardSpeed
-
-                if (z <= 0) z *= 0.25f
-
-                this.movementSpeed = 0.3f
-                super.travel(Vec3d(x.toDouble(), pos.y, z.toDouble()))
-            }
-        }
-    }
-
-    // Get the controlling passenger
-    override fun getControllingPassenger(): LivingEntity? {
-        return firstPassenger as? LivingEntity?
     }
 
     override fun isLogicalSideForUpdatingMovement(): Boolean {
