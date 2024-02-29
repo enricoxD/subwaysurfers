@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.registry
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
+import gg.norisk.subwaysurfers.item.BuilderItem
 import gg.norisk.subwaysurfers.item.HoverboardItem
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.minecraft.item.BlockItem
@@ -10,10 +11,12 @@ import net.minecraft.item.ItemStack
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.text.Text
+import net.minecraft.util.Rarity
 
 object ItemRegistry {
     val COIN: Item = registerItem("coin", Item(Item.Settings()))
     val HOVERBOARD: Item = registerItem("hoverboard", HoverboardItem(Item.Settings()))
+    val BUILDER: Item = registerItem("builder", BuilderItem(Item.Settings().maxCount(1).rarity(Rarity.EPIC)))
     val SUBWAY_RAIL: BlockItem = registerItem("subway_rail", BlockItem(BlockRegistry.SUBWAY_RAIL, Item.Settings()))
     val TOP_BARRIER: BlockItem = registerItem("top_barrier", BlockItem(BlockRegistry.TOP_BARRIER, Item.Settings()))
     val BOTTOM_BARRIER: BlockItem =
@@ -33,6 +36,7 @@ object ItemRegistry {
                 entries.add(TOP_BARRIER)
                 entries.add(BOTTOM_BARRIER)
                 entries.add(HOVERBOARD)
+                entries.add(BUILDER)
             }.build()
     )
 
