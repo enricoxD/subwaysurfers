@@ -3,6 +3,7 @@ package gg.norisk.subwaysurfers.mixin.client.structure;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate;
+import gg.norisk.subwaysurfers.entity.OriginMarker;
 import gg.norisk.subwaysurfers.entity.UUIDMarker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -93,6 +94,9 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                     if (MinecraftClient.getInstance().player != null) {
                         uuidMarker.setOwner(MinecraftClient.getInstance().player.getUuid());
                     }
+                }
+                if (entity instanceof OriginMarker originMarker) {
+                    originMarker.setOrigin(entity.getBlockPos());
                 }
 
                 world.addEntity(entity);

@@ -1,7 +1,9 @@
 package gg.norisk.subwaysurfers.mixin.entity.player;
 
+import gg.norisk.subwaysurfers.event.events.PlayerEvents;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -51,11 +53,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
         }
     }
 
+    @Override
+    protected void onBlockCollision(BlockState blockState) {
+        super.onBlockCollision(blockState);
+        PlayerEvents.INSTANCE.getBlockCollisionEvent().invoke(new PlayerEvents.PlayerBlockCollisionEvent((PlayerEntity) (Object) this, blockState));
+    }
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void tickInjection(CallbackInfo ci) {
         if (!this.getWorld().isClient) {
             SubwaySurferKt.handleMagnet((PlayerEntity) (Object) this);
             SubwaySurferKt.handlePunishTicks((PlayerEntity) (Object) this);
+        } else {
+            if (horizontalCollision) {
+                PlayerEvents.INSTANCE.getHorionztalCollisionEvent().invoke(new PlayerEvents.PlayerHorionztalCollisionEvent((PlayerEntity) (Object) this));
+            }
         }
     }
 

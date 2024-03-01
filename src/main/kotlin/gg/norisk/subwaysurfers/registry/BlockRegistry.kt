@@ -17,10 +17,10 @@ object BlockRegistry {
         )
     )
     val BOTTOM_BARRIER = registerBlock(
-        "bottom_barrier", BottomBarrierBlock(AbstractBlock.Settings.create().nonOpaque())
+        "bottom_barrier", BottomBarrierBlock(AbstractBlock.Settings.create().noCollision().nonOpaque())
     )
     val TOP_BARRIER = registerBlock(
-        "top_barrier", TopBarrierBlock(AbstractBlock.Settings.create().nonOpaque())
+        "top_barrier", TopBarrierBlock(AbstractBlock.Settings.create().noCollision().nonOpaque())
     )
 
     private fun <B : Block> registerBlock(name: String, block: B): B {

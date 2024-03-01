@@ -1,7 +1,5 @@
 package gg.norisk.subwaysurfers.entity
 
-import gg.norisk.subwaysurfers.server.command.StartCommand
-import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -13,7 +11,6 @@ import net.minecraft.entity.passive.AnimalEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -111,11 +108,6 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
 
     override fun onPlayerCollision(playerEntity: PlayerEntity) {
         super.onPlayerCollision(playerEntity)
-        if (!world.isClient) {
-            if (playerEntity.y <= this.y && playerEntity.z <= this.z && playerEntity.isSubwaySurfers) {
-                StartCommand.handleGameStop(playerEntity as ServerPlayerEntity)
-            }
-        }
     }
 
     override fun tick() {

@@ -6,12 +6,15 @@ import gg.norisk.subwaysurfers.client.input.KeyboardInput
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
 import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
+import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.command.StartCommand
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
 import gg.norisk.subwaysurfers.server.listener.ScreenListener
+import gg.norisk.subwaysurfers.server.mechanics.ItemEffectManager
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
+import gg.norisk.subwaysurfers.server.mechanics.PunishManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
 import gg.norisk.subwaysurfers.worldgen.RailWorldManager
 import gg.norisk.subwaysurfers.worldgen.StructureManager
@@ -34,13 +37,13 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         RailWorldManager.init()
         StartCommand.init()
         MovementInputListener.init()
-        PatternManager.init()
         NetworkRegistry.init()
         serverDevCommands()
     }
 
     override fun onInitializeClient() {
         EntityRendererRegistry.init()
+        ClientCollisionManager.init()
         ClientSettings.init()
         KeyboardInput.init()
         InGameHud.init()
@@ -82,5 +85,8 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
 
     override fun onInitializeServer() {
         SpeedManager.init()
+        ItemEffectManager.init()
+        PunishManager.init()
+        PatternManager.init()
     }
 }
