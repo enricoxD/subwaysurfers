@@ -3,7 +3,6 @@ package gg.norisk.subwaysurfers.client.mechanics
 import gg.norisk.subwaysurfers.event.events.PlayerEvents
 import gg.norisk.subwaysurfers.network.c2s.blockCollisionPacketC2S
 import gg.norisk.subwaysurfers.network.c2s.horizontalCollisionPacketC2S
-import gg.norisk.subwaysurfers.registry.BlockRegistry
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity

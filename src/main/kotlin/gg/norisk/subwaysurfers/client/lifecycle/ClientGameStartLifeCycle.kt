@@ -9,6 +9,7 @@ import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfersOrSpectator
 import gg.norisk.subwaysurfers.worldgen.PatternGenerator
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.block.Block
+import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.world.ClientWorld
@@ -37,15 +38,16 @@ object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
     }
 
     private fun handleWallGeneration(player: ClientPlayerEntity) {
-        val leftOffset = 3.0
+        val leftOffset = 4.0
         val rightOffset = -20.0
-        val offset = 5.0
+        val offset = 1.0
+        val railOffset = 3.5
         leftWallPatternGenerator = PatternGenerator(
             startPos = ClientSettings.startPos!!.add(leftOffset + offset, -1.0, 0.0).toBlockPos(),
             patternStack = Stack<Stack<String>>().apply { add(ClientSettings.getLeftPattern().toStack()) }
         )
         railPatternGenerator = PatternGenerator(
-            startPos = ClientSettings.startPos!!.add(-4.0, -1.0, 0.0).toBlockPos(),
+            startPos = ClientSettings.startPos!!.add(-railOffset, -1.0, 0.0).toBlockPos(),
             patternStack = Stack<Stack<String>>().apply { add(ClientSettings.getMiddlePattern().toStack()) }
         )
         rightWallPatternGenerator = PatternGenerator(
@@ -69,7 +71,7 @@ object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
             for (fakeBlock in fakeBlocks) {
                 val shouldClear = forceClear || fakeBlock.pos.z < player.z - 5
                 if (shouldClear) {
-                    player.world.setBlockState(fakeBlock.pos, fakeBlock.state, Block.NOTIFY_ALL_AND_REDRAW)
+                    player.world.setBlockState(fakeBlock.pos, Blocks.AIR.defaultState, Block.NOTIFY_ALL_AND_REDRAW)
                     toRemove.add(fakeBlock)
                 }
             }

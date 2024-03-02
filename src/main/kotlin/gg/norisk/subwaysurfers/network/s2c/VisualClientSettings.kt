@@ -1,13 +1,15 @@
 package gg.norisk.subwaysurfers.network.s2c
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
+import gg.norisk.subwaysurfers.network.dto.PositionDto
 import kotlinx.serialization.Serializable
 import net.silkmc.silk.network.packet.s2cPacket
 
 @Serializable
 data class VisualClientSettings(
+    var startPos: PositionDto = PositionDto(8.5, -60.0, 8.5, 0f, 0f),
     var isEnabled: Boolean = false,
-    var desiredCameraDistance: Double = 30.0,
+    var desiredCameraDistance: Double = 5.0,
     var cameraOffsetY: Double = 1.5,
     var cameraOffsetZ: Double = 2.0,
     var cameraSpeedX: Double = 0.05,

@@ -1,5 +1,7 @@
 package gg.norisk.subwaysurfers.client.hud
 
+import ca.weblite.objc.Client
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
 import gg.norisk.subwaysurfers.network.c2s.homePacketC2S
 import gg.norisk.subwaysurfers.network.c2s.restartPacketC2S
 import io.wispforest.owo.ui.base.BaseOwoScreen
@@ -44,15 +46,21 @@ class GameOverScreen : BaseOwoScreen<FlowLayout>() {
         )
         val base = Containers.horizontalFlow(Sizing.fill(), Sizing.fill(80))
         val footer = FooterComponent(listOf(Components.button(Text.translatable("ui.gameover.home")) {
-            homePacketC2S.send(Unit)
-            this@GameOverScreen.close()
+            ClientGameStartLifeCycle.clearFakeBlocksAndEntities(true)
+            mcCoroutineTask(delay = 2.ticks, client = true) {
+                homePacketC2S.send(Unit)
+                this@GameOverScreen.close()
+            }
         }.apply {
             horizontalSizing(
                 Sizing.fill(40)
             )
         }, Components.button(Text.translatable("ui.gameover.play")) {
-            restartPacketC2S.send(Unit)
-            this@GameOverScreen.close()
+            ClientGameStartLifeCycle.clearFakeBlocksAndEntities(true)
+            mcCoroutineTask(delay = 2.ticks, client = true) {
+                restartPacketC2S.send(Unit)
+                this@GameOverScreen.close()
+            }
         }.apply {
             horizontalSizing(
                 Sizing.fill(40)

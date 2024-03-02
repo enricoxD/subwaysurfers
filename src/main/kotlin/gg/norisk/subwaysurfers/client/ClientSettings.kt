@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.client
 
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
 import gg.norisk.subwaysurfers.extensions.toStack
+import gg.norisk.subwaysurfers.network.dto.PositionDto
 import gg.norisk.subwaysurfers.network.s2c.VisualClientSettings
 import gg.norisk.subwaysurfers.network.s2c.patternPacketS2C
 import gg.norisk.subwaysurfers.network.s2c.visualClientSettingsS2C
@@ -10,6 +11,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.option.Perspective
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
 //TODO 2 Neue Blöcke (Absperrband und So drunter Rutschen)
@@ -31,7 +33,7 @@ object ClientSettings : ClientTickEvents.EndTick {
         visualClientSettingsS2C.receiveOnClient { packet, context ->
             val player = context.client.player ?: return@receiveOnClient
             if (packet.isEnabled) {
-                startPos = player.blockPos.toCenterPos()
+                startPos = Vec3d(packet.startPos.x, packet.startPos.y, packet.startPos.z)
                 player.yaw = 0f
                 player.pitch = 0f
                 MinecraftClient.getInstance().options.perspective = Perspective.THIRD_PERSON_BACK

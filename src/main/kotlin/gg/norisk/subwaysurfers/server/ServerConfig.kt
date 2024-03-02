@@ -11,10 +11,16 @@ import java.io.File
 
 object ServerConfig {
     @Serializable
-    data class Config(var spawn: PositionDto)
+    data class Config(
+        var spawn: PositionDto,
+        var startPos: PositionDto
+    )
 
     var configFile = File("config", "subwaysurfer-config.json")
-    var config = Config((PositionDto(0.0, 40.0, 0.0, 0f, 0f)))
+    var config = Config(
+        PositionDto(0.5, -60.0, 0.5, 0f, 0f),
+        PositionDto(8.5, -60.0, 8.5, 0f, 0f)
+    )
 
     fun init() {
         configCommands()

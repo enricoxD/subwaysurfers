@@ -6,6 +6,7 @@ import gg.norisk.subwaysurfers.network.s2c.PatternPacket
 import gg.norisk.subwaysurfers.network.s2c.VisualClientSettings
 import gg.norisk.subwaysurfers.network.s2c.gameOverScreenS2C
 import gg.norisk.subwaysurfers.network.s2c.visualClientSettingsS2C
+import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
 import gg.norisk.subwaysurfers.subwaysurfers.*
@@ -89,20 +90,20 @@ object StartCommand {
         pitchArg?.apply { settings.pitch = this }
 
         if (isEnabled) {
-            val centerPos = player.blockPos.toCenterPos()
-            val topY = player.serverWorld.getTopY(
-                Heightmap.Type.WORLD_SURFACE,
-                centerPos.x.roundToInt(),
-                centerPos.z.roundToInt()
-            )
-
             settings.patternPacket = PatternPacket(
                 PatternManager.currentPattern.left,
                 PatternManager.currentPattern.middle,
                 PatternManager.currentPattern.right
             )
 
-            player.teleport(player.serverWorld, centerPos.x, topY.toDouble(), centerPos.z, 0f, 0f)
+            player.teleport(
+                player.serverWorld,
+                ServerConfig.config.startPos.x,
+                ServerConfig.config.startPos.y,
+                ServerConfig.config.startPos.z,
+                0f,
+                0f
+            )
             player.isSubwaySurfers = true
             player.coins = 0
             player.punishTicks = 0
