@@ -10,7 +10,7 @@ object GameOverListener {
         gameOverScreenS2C.receiveOnClient { packet, context ->
             mcCoroutineTask(sync = true, client = true) {
                 ClientSettings.disable()
-                context.client.setScreen(GameOverScreen())
+                context.client.setScreen(GameOverScreen(packet.coins, ClientSettings.ridingTicks))
             }
         }
     }

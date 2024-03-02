@@ -33,6 +33,7 @@ import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.kotlin.ticks
 import net.silkmc.silk.core.task.mcCoroutineTask
 import org.slf4j.LoggerFactory
+import kotlin.random.Random
 
 object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModInitializer {
     override fun onInitialize() {
@@ -104,7 +105,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
                 literal("gameover") {
                     runs {
                         mcCoroutineTask(delay = 1.ticks, client = true) {
-                            MinecraftClient.getInstance().setScreen(GameOverScreen())
+                            MinecraftClient.getInstance().setScreen(GameOverScreen(Random.nextInt(), Random.nextInt()))
                         }
                     }
                 }

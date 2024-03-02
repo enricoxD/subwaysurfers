@@ -2,10 +2,7 @@ package gg.norisk.subwaysurfers.server.command
 
 import com.mojang.brigadier.context.CommandContext
 import gg.norisk.subwaysurfers.entity.UUIDMarker
-import gg.norisk.subwaysurfers.network.s2c.PatternPacket
-import gg.norisk.subwaysurfers.network.s2c.VisualClientSettings
-import gg.norisk.subwaysurfers.network.s2c.gameOverScreenS2C
-import gg.norisk.subwaysurfers.network.s2c.visualClientSettingsS2C
+import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
@@ -61,7 +58,7 @@ object StartCommand {
     }
 
     fun handleGameStop(player: ServerPlayerEntity) {
-        gameOverScreenS2C.send(Unit, player)
+        gameOverScreenS2C.send(GameOverDto(player.coins, player.age), player)
         player.isSubwaySurfers = false
         player.coins = 0
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed

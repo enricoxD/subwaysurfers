@@ -20,7 +20,7 @@ import net.silkmc.silk.core.text.literal
 import net.silkmc.silk.core.text.literalText
 import kotlin.random.Random
 
-class GameOverScreen : BaseOwoScreen<FlowLayout>() {
+class GameOverScreen(val coins: Int, val score: Int) : BaseOwoScreen<FlowLayout>() {
     override fun createAdapter(): OwoUIAdapter<FlowLayout> {
         return OwoUIAdapter.create(this, Containers::verticalFlow)
     }
@@ -177,7 +177,7 @@ class GameOverScreen : BaseOwoScreen<FlowLayout>() {
         }
     }
 
-    private class GameOverComponent(
+    private inner class GameOverComponent(
         horizontalSizing: Sizing = Sizing.fill(),
         verticalSizing: Sizing = Sizing.fill()
     ) : FlowLayout(
@@ -195,8 +195,8 @@ class GameOverScreen : BaseOwoScreen<FlowLayout>() {
             horizontalWrapper.gap(25)
 
             val verticalWrapper = Containers.verticalFlow(Sizing.content(), Sizing.content())
-            val score = PrettyLabelComponent("ui.gameover.score", Random.nextInt(1, 100).toString())
-            val coins = PrettyLabelComponent("ui.gameover.coins", Random.nextInt(1, 100).toString())
+            val score = PrettyLabelComponent("ui.gameover.score", this@GameOverScreen.score.toString())
+            val coins = PrettyLabelComponent("ui.gameover.coins", this@GameOverScreen.coins.toString())
             verticalWrapper.child(score)
             verticalWrapper.child(coins)
             verticalWrapper.gap(5)

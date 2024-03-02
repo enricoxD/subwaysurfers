@@ -9,12 +9,8 @@ import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.passive.AnimalEntity
-import net.minecraft.entity.passive.PassiveEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import software.bernie.geckolib.animatable.GeoEntity
 import software.bernie.geckolib.constant.DefaultAnimations
@@ -23,7 +19,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegis
 import software.bernie.geckolib.util.GeckoLibUtil
 import java.util.*
 
-class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEntity(type, level), GeoEntity, UUIDMarker {
+class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity, UUIDMarker {
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
     override var owner: UUID? = null
 
@@ -35,33 +31,18 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
             this.dataTracker.set(TYPE, value)
         }
 
-    var shouldDrive: Boolean
-        get() {
-            return this.dataTracker.get(DRIVE)
-        }
-        set(value) {
-            this.dataTracker.set(DRIVE, value)
-        }
-
-    init {
-        this.ignoreCameraFrustum = true
-    }
-
     override fun initDataTracker() {
         super.initDataTracker()
-        this.dataTracker.startTracking(DRIVE, false)
         this.dataTracker.startTracking(TYPE, 1)
     }
 
     override fun writeCustomDataToNbt(nbtCompound: NbtCompound) {
         super.writeCustomDataToNbt(nbtCompound)
-        nbtCompound.putBoolean("shouldDrive", shouldDrive)
         nbtCompound.putInt("Variation", variation)
     }
 
     override fun readCustomDataFromNbt(nbtCompound: NbtCompound) {
         super.readCustomDataFromNbt(nbtCompound)
-        shouldDrive = nbtCompound.getBoolean("shouldDrive")
         variation = nbtCompound.getInt("Variation")
     }
 
@@ -96,21 +77,6 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
         return super.collidesWith(entity)
     }
 
-    override fun travel(pos: Vec3d) {
-        if (this.isAlive && shouldDrive && world.isClient) {
-            val x = 0.0
-            val z = 1.0
-
-            movementSpeed = 0.3f
-
-            super.travel(Vec3d(x, pos.y, z))
-        }
-    }
-
-    override fun onPlayerCollision(playerEntity: PlayerEntity) {
-        super.onPlayerCollision(playerEntity)
-    }
-
     override fun tick() {
         super.tick()
         handleDiscard(owner)
@@ -128,5 +94,4 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
     }
 
     override fun getAnimatableInstanceCache(): AnimatableInstanceCache = this.cache
-    override fun createChild(level: ServerWorld, partner: PassiveEntity): PassiveEntity? = null
 }

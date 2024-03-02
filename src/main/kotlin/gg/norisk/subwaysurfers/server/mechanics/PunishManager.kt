@@ -31,7 +31,7 @@ object PunishManager {
             val player = context.player
             if (player.isSubwaySurfers && player.lastBlockCollisionPos != packet) {
                 player.lastBlockCollisionPos = packet
-                player.punishHit()
+                StartCommand.handleGameStop(player)
             }
         }
     }
