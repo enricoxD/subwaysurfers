@@ -79,6 +79,23 @@ var PlayerEntity.lastPatternUpdatePos: Int
         this.dataTracker.set(lastPatternUpdatePosTracker, value)
     }
 
+var PlayerEntity.lastHorizontalCollisionPos: Int
+    get() {
+        return this.dataTracker.get(lastHorizontalCollisionPosTracker)
+    }
+    set(value) {
+        this.dataTracker.set(lastHorizontalCollisionPosTracker, value)
+    }
+
+var PlayerEntity.lastBlockCollisionPos: Int
+    get() {
+        return this.dataTracker.get(lastBlockCollisionPosTracker)
+    }
+    set(value) {
+        this.dataTracker.set(lastBlockCollisionPosTracker, value)
+    }
+
+
 val PlayerEntity.isSubwaySurfersOrSpectator: Boolean
     get() {
         return this.dataTracker.get(subwaySurfersTracker) or false
@@ -112,7 +129,6 @@ var PlayerEntity.coins: Int
 fun PlayerEntity.handlePunishTicks() {
     if (punishTicks > 0) {
         --punishTicks
-
     }
 }
 
@@ -140,6 +156,10 @@ val jumpStrengthTracker =
 val railDataTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val lastPatternUpdatePosTracker =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
+val lastHorizontalCollisionPosTracker =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
+val lastBlockCollisionPosTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val multiplierTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)

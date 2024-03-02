@@ -20,6 +20,7 @@ import gg.norisk.subwaysurfers.worldgen.RailWorldManager
 import gg.norisk.subwaysurfers.worldgen.StructureManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
+import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.entity.EquipmentSlot
@@ -39,6 +40,13 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         MovementInputListener.init()
         NetworkRegistry.init()
         serverDevCommands()
+
+        if (FabricLoader.getInstance().isDevelopmentEnvironment || FabricLoader.getInstance().environmentType == EnvType.SERVER) {
+            SpeedManager.init()
+            ItemEffectManager.init()
+            PunishManager.init()
+            PatternManager.init()
+        }
     }
 
     override fun onInitializeClient() {
@@ -84,9 +92,5 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
     }
 
     override fun onInitializeServer() {
-        SpeedManager.init()
-        ItemEffectManager.init()
-        PunishManager.init()
-        PatternManager.init()
     }
 }
