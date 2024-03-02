@@ -1,5 +1,6 @@
 package gg.norisk.subwaysurfers.entity
 
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -77,7 +78,7 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnti
 
         fun LivingEntity.handleDiscard(owner: UUID?) {
             val player = world.getPlayerByUuid(owner ?: return)
-            if (player == null) {
+            if (player == null || !player.isSubwaySurfers) {
                 this.discard()
             } else {
                 //TODO 5 should be a setting

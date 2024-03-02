@@ -4,11 +4,13 @@ import gg.norisk.subwaysurfers.network.c2s.homePacketC2S
 import gg.norisk.subwaysurfers.network.c2s.restartPacketC2S
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.StartCommand
+import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 
 object ScreenListener {
     fun init() {
         restartPacketC2S.receiveOnServer { packet, context ->
+            val player = context.player
             StartCommand.handleStartGame(context.player)
         }
         homePacketC2S.receiveOnServer { packet, context ->
@@ -21,8 +23,14 @@ object ScreenListener {
                 ServerConfig.config.spawn.yaw,
                 ServerConfig.config.spawn.pitch,
             )
-            //TODO wieso geht der scheiß sound nicht hö
-            player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.8f, 1f)
+            player.world.playSoundFromEntity(
+                null,
+                player,
+                SoundEvents.ENTITY_ENDERMAN_TELEPORT,
+                SoundCategory.PLAYERS,
+                0.4f,
+                0.8f
+            )
         }
     }
 }

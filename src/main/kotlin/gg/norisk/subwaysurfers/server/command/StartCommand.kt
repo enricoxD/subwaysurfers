@@ -13,6 +13,8 @@ import gg.norisk.subwaysurfers.worldgen.RailWorldManager
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
 import net.minecraft.world.Heightmap
 import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.kotlin.ticks
@@ -61,15 +63,16 @@ object StartCommand {
         gameOverScreenS2C.send(Unit, player)
         player.isSubwaySurfers = false
         player.coins = 0
-        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = 0.1
+        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
         player.rail = 1
-        RailWorldManager.removePlayer(player)
-        val entites = player.serverWorld.iterateEntities().toList()
-        for (entity in entites) {
-            if (entity is UUIDMarker && entity.owner == player.uuid) {
-                entity.discard()
-            }
-        }
+        player.world.playSoundFromEntity(
+            null,
+            player,
+            SoundEvents.BLOCK_GLASS_BREAK,
+            SoundCategory.PLAYERS,
+            0.4f,
+            0.8f
+        )
     }
 
     fun handleStartGame(
@@ -113,10 +116,6 @@ object StartCommand {
         visualClientSettingsS2C.send(settings, player)
 
         player.rail = 1
-
-        mcCoroutineTask(delay = 1.ticks) {
-            //RailWorldManager.addPlayer(player)
-        }
     }
 
     private fun CommandContext<ServerCommandSource>.extracted(

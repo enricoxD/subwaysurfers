@@ -7,7 +7,7 @@ import net.silkmc.silk.network.packet.s2cPacket
 @Serializable
 data class VisualClientSettings(
     var isEnabled: Boolean = false,
-    var desiredCameraDistance: Double = 5.0,
+    var desiredCameraDistance: Double = 30.0,
     var cameraOffsetY: Double = 1.5,
     var cameraOffsetZ: Double = 2.0,
     var cameraSpeedX: Double = 0.05,

@@ -1,7 +1,6 @@
 package gg.norisk.subwaysurfers.mixin.client.option;
 
 import gg.norisk.subwaysurfers.client.ClientSettings;
-import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.Perspective;
 import org.spongepowered.asm.mixin.Mixin;

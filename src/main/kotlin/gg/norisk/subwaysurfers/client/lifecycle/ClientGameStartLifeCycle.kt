@@ -1,20 +1,28 @@
 package gg.norisk.subwaysurfers.client.lifecycle
 
 import gg.norisk.subwaysurfers.client.ClientSettings
+import gg.norisk.subwaysurfers.entity.UUIDMarker
 import gg.norisk.subwaysurfers.extensions.toBlockPos
 import gg.norisk.subwaysurfers.extensions.toStack
+import gg.norisk.subwaysurfers.mixin.world.WorldAccessor
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfersOrSpectator
 import gg.norisk.subwaysurfers.worldgen.PatternGenerator
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.minecraft.block.Block
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.world.ClientWorld
+import net.minecraft.entity.Entity
 import net.minecraft.util.BlockMirror
 import net.silkmc.silk.core.event.Event
-import net.silkmc.silk.core.text.literal
+import net.silkmc.silk.core.task.mcCoroutineTask
+import net.silkmc.silk.core.world.block.BlockInfo
 import java.util.*
 
+
 object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
+    var fakeBlocks = mutableListOf<BlockInfo>()
+
     var leftWallPatternGenerator: PatternGenerator? = null
     var railPatternGenerator: PatternGenerator? = null
     var rightWallPatternGenerator: PatternGenerator? = null
@@ -48,14 +56,43 @@ object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
     }
 
     private fun onStart() {
-        handleWallGeneration(MinecraftClient.getInstance().player!!)
+        val player = MinecraftClient.getInstance().player ?: return
+        clearFakeBlocksAndEntities(true)
+        handleWallGeneration(player)
+    }
+
+    fun clearFakeBlocksAndEntities(forceClear: Boolean = false) {
+        mcCoroutineTask(sync = true, client = true) {
+            val player = MinecraftClient.getInstance().player ?: return@mcCoroutineTask
+
+            val toRemove = mutableListOf<BlockInfo>()
+            for (fakeBlock in fakeBlocks) {
+                val shouldClear = forceClear || fakeBlock.pos.z < player.z - 5
+                if (shouldClear) {
+                    player.world.setBlockState(fakeBlock.pos, fakeBlock.state, Block.NOTIFY_ALL_AND_REDRAW)
+                    toRemove.add(fakeBlock)
+                }
+            }
+            if (forceClear) {
+                val entityRemoval = mutableListOf<Entity>()
+                for (entity in (player.world as WorldAccessor).invokeGetEntityLookup().iterate()) {
+                    if (entity is UUIDMarker && entity.owner == player.uuid) {
+                        entityRemoval.add(entity)
+                    }
+                }
+                entityRemoval.forEach(Entity::discard)
+            }
+            fakeBlocks.removeAll(toRemove.toSet())
+        }
     }
 
     override fun onEndTick(world: ClientWorld) {
-        if (MinecraftClient.getInstance().player?.isSubwaySurfersOrSpectator == true) {
-            leftWallPatternGenerator?.tick(MinecraftClient.getInstance().player!!)
-            railPatternGenerator?.tick(MinecraftClient.getInstance().player!!)
-            rightWallPatternGenerator?.tick(MinecraftClient.getInstance().player!!)
+        val player = MinecraftClient.getInstance().player ?: return
+        if (player.isSubwaySurfersOrSpectator) {
+            clearFakeBlocksAndEntities()
+            leftWallPatternGenerator?.tick(player)
+            railPatternGenerator?.tick(player)
+            rightWallPatternGenerator?.tick(player)
         }
     }
 }

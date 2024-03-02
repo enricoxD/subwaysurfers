@@ -12,6 +12,8 @@ import io.wispforest.owo.ui.core.*
 import io.wispforest.owo.ui.util.UISounds
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
+import net.silkmc.silk.core.kotlin.ticks
+import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literal
 import net.silkmc.silk.core.text.literalText
 import kotlin.random.Random

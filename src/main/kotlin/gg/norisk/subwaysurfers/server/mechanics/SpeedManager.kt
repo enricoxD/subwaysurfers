@@ -9,7 +9,7 @@ import net.silkmc.silk.core.kotlin.ticks
 import net.silkmc.silk.core.task.infiniteMcCoroutineTask
 
 object SpeedManager {
-    val vanillaSpeed = EntityAttributes.GENERIC_MOVEMENT_SPEED.defaultValue
+    const val vanillaSpeed = 0.10000000149011612
 
     const val SURFER_BASE_SPEED = 0.15
     private const val SURFER_MAX_SPEED = 0.4

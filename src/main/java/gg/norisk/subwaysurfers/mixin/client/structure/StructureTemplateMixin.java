@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.mixin.client.structure;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle;
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate;
 import gg.norisk.subwaysurfers.entity.OriginMarker;
 import gg.norisk.subwaysurfers.entity.UUIDMarker;
@@ -31,6 +32,7 @@ import net.minecraft.util.shape.BitSetVoxelSet;
 import net.minecraft.util.shape.VoxelSet;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.WorldAccess;
+import net.silkmc.silk.core.world.block.BlockInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -234,6 +236,7 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                                         BlockState blockState3 = Block.postProcessState(blockState2, clientWorld, blockPos7);
                                         if (blockState2 != blockState3) {
                                             clientWorld.setBlockState(blockPos7, blockState3, i & -2 | 16);
+                                            ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(blockState2, blockPos7));
                                         }
 
                                         clientWorld.updateNeighbors(blockPos7, blockState3.getBlock());
@@ -259,15 +262,19 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                         blockPos3 = structureBlockInfo.comp_1341();
                     } while (blockBox != null && !blockBox.contains(blockPos3));
 
+                    BlockState oldBlockState = clientWorld.getBlockState(blockPos3);
+
                     FluidState fluidState = structurePlacementData.shouldPlaceFluids() ? clientWorld.getFluidState(blockPos3) : null;
                     BlockState blockState = structureBlockInfo.comp_1342().mirror(structurePlacementData.getMirror()).rotate(structurePlacementData.getRotation());
                     if (structureBlockInfo.comp_1343() != null) {
                         blockEntity = clientWorld.getBlockEntity(blockPos3);
                         Clearable.clear(blockEntity);
                         clientWorld.setBlockState(blockPos3, Blocks.BARRIER.getDefaultState(), 20);
+                        ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(oldBlockState, blockPos3));
                     }
 
                     if (clientWorld.setBlockState(blockPos3, blockState, i)) {
+                        ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(oldBlockState, blockPos3));
                         j = Math.min(j, blockPos3.getX());
                         k = Math.min(k, blockPos3.getY());
                         l = Math.min(l, blockPos3.getZ());

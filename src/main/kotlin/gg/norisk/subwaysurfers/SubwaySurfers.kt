@@ -84,6 +84,12 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
                     player.equipStack(EquipmentSlot.HEAD, player.mainHandStack)
                 }
             }
+            command("reloadchunks") {
+                runs {
+                    val player = this.source.playerOrThrow
+                    player.serverWorld.onPlayerRespawned(player)
+                }
+            }
         }
     }
 
