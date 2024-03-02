@@ -40,7 +40,7 @@ object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
     private fun handleWallGeneration(player: ClientPlayerEntity) {
         val leftOffset = 4.0
         val rightOffset = -20.0
-        val offset = 1.0
+        val offset = 0.0
         val railOffset = 3.5
         leftWallPatternGenerator = PatternGenerator(
             startPos = ClientSettings.startPos!!.add(leftOffset + offset, -1.0, 0.0).toBlockPos(),

@@ -13,6 +13,8 @@ import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
+import net.silkmc.silk.core.text.literal
+import kotlin.math.roundToLong
 
 object KeyboardInput {
     fun init() {
@@ -30,7 +32,10 @@ object KeyboardInput {
             } else if (it.client.options.rightKey.matchesKey(it.key, it.scanCode)) {
                 handleRightDash(player)
             } else if (it.client.options.jumpKey.matchesKey(it.key, it.scanCode)) {
-                movementTypePacket.send(MovementType.JUMP)
+                //Jup thats kinda rough buddy
+                if (player.velocity.y == -0.2940000174045565) {
+                    movementTypePacket.send(MovementType.JUMP)
+                }
             } else if (it.client.options.sneakKey.matchesKey(it.key, it.scanCode)) {
                 movementTypePacket.send(MovementType.SLIDE)
             }
