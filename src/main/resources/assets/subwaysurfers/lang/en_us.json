@@ -5,5 +5,13 @@
   "block.subwaysurfers.subway_rail": "Rail",
   "entity.subwaysurfers.train": "Train",
   "item.subwaysurfers.hoverboard": "Hoverboard",
-  "item.subwaysurfers.builder": "Builder Util"
+  "item.subwaysurfers.builder": "Builder Util",
+  "ui.gameover.gameover": "GAME OVER!!!",
+  "ui.gameover.score": "Score",
+  "ui.gameover.coins": "Coins",
+  "ui.gameover.home": "HOME",
+  "ui.gameover.play": "PLAY",
+  "ui.gameover.stats": "STATS",
+  "ui.gameover.friends": "FRIENDS",
+  "ui.gameover.global": "GLOBAL"
 }

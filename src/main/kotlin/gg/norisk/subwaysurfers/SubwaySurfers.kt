@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers
 
 import gg.norisk.subwaysurfers.client.ClientSettings
+import gg.norisk.subwaysurfers.client.hud.GameOverScreen
 import gg.norisk.subwaysurfers.client.hud.InGameHud
 import gg.norisk.subwaysurfers.client.input.KeyboardInput
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
@@ -23,10 +24,13 @@ import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.util.Identifier
 import net.silkmc.silk.commands.clientCommand
 import net.silkmc.silk.commands.command
+import net.silkmc.silk.core.kotlin.ticks
+import net.silkmc.silk.core.task.mcCoroutineTask
 import org.slf4j.LoggerFactory
 
 object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModInitializer {
@@ -86,6 +90,15 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
             clientCommand("curvedshader") {
                 runs {
                     ShaderManager.loadCurvedShader()
+                }
+            }
+            clientCommand("testscreen") {
+                literal("gameover") {
+                    runs {
+                        mcCoroutineTask(delay = 1.ticks, client = true) {
+                            MinecraftClient.getInstance().setScreen(GameOverScreen())
+                        }
+                    }
                 }
             }
         }
