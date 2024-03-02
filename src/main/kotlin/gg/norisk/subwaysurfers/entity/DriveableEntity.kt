@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.entity
 
 import gg.norisk.subwaysurfers.client.hud.NbtEditorScreen
+import gg.norisk.subwaysurfers.entity.TrainEntity.Companion.handleDiscard
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.data.DataTracker
@@ -16,8 +17,9 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import net.silkmc.silk.core.entity.modifyVelocity
+import java.util.*
 
-open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEntity(type, level) {
+open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEntity(type, level), UUIDMarker {
     var moveSpeed: Float
         get() {
             return this.dataTracker.get(MOVE_SPEED)
@@ -25,6 +27,8 @@ open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : A
         set(value) {
             this.dataTracker.set(MOVE_SPEED, value)
         }
+
+    override var owner: UUID? = null
 
     var shouldDrive: Boolean
         get() {
@@ -66,14 +70,21 @@ open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : A
         }
     }
 
+    override fun tick() {
+        super.tick()
+        handleDiscard(owner)
+    }
+
     override fun writeCustomDataToNbt(nbtCompound: NbtCompound) {
         super.writeCustomDataToNbt(nbtCompound)
         nbtCompound.putBoolean("shouldDrive", shouldDrive)
+        nbtCompound.putFloat("moveSpeed", moveSpeed)
     }
 
     override fun readCustomDataFromNbt(nbtCompound: NbtCompound) {
         super.readCustomDataFromNbt(nbtCompound)
         shouldDrive = nbtCompound.getBoolean("shouldDrive")
+        moveSpeed = nbtCompound.getFloat("moveSpeed")
     }
 
     override fun isLogicalSideForUpdatingMovement(): Boolean = true

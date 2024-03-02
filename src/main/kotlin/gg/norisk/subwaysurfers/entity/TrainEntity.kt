@@ -19,9 +19,8 @@ import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegis
 import software.bernie.geckolib.util.GeckoLibUtil
 import java.util.*
 
-class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity, UUIDMarker {
+class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity {
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
-    override var owner: UUID? = null
 
     var variation: Int
         get() {
@@ -75,11 +74,6 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableE
             return false
         }
         return super.collidesWith(entity)
-    }
-
-    override fun tick() {
-        super.tick()
-        handleDiscard(owner)
     }
 
     override fun isLogicalSideForUpdatingMovement(): Boolean = true

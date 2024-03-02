@@ -24,16 +24,10 @@ import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegis
 import software.bernie.geckolib.util.GeckoLibUtil
 import java.util.*
 
-class CoinEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity, UUIDMarker,
+class CoinEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity,
     OriginMarker {
-    override var owner: UUID? = null
     override var origin: BlockPos = this.blockPos
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
-
-    override fun tick() {
-        super.tick()
-        handleDiscard(owner)
-    }
 
     override fun pushAwayFrom(entity: Entity?) {
     }
