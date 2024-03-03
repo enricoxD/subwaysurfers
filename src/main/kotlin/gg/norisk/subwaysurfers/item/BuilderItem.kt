@@ -49,7 +49,10 @@ class BuilderItem(settings: Settings) : Item(settings) {
         MAGNET(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             val magnet =
                 EntityRegistry.MAGNET.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG) as MagnetEntity
-        })
+        }),
+        TRAFFICLIGHT(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
+            EntityRegistry.TRAFFICLIGHT.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
+        }),
     }
 
     override fun canMine(

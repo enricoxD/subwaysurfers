@@ -19,7 +19,6 @@ object ItemRegistry {
     val BUILDER: Item = registerItem("builder", BuilderItem(Item.Settings().maxCount(1).rarity(Rarity.EPIC)))
     val SUBWAY_RAIL: BlockItem = registerItem("subway_rail", BlockItem(BlockRegistry.SUBWAY_RAIL, Item.Settings()))
     val TOP_BARRIER: BlockItem = registerItem("top_barrier", BlockItem(BlockRegistry.TOP_BARRIER, Item.Settings()))
-    val TRAFFICLIGHT: BlockItem = registerItem("trafficlight", BlockItem(BlockRegistry.TRAFFICLIGHT, Item.Settings()))
     val BOTTOM_BARRIER: BlockItem =
         registerItem("bottom_barrier", BlockItem(BlockRegistry.BOTTOM_BARRIER, Item.Settings()))
 
@@ -38,7 +37,6 @@ object ItemRegistry {
                 entries.add(BOTTOM_BARRIER)
                 entries.add(HOVERBOARD)
                 entries.add(BUILDER)
-                entries.add(TRAFFICLIGHT)
             }.build()
     )
 

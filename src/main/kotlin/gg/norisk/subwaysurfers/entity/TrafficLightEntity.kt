@@ -1,23 +1,18 @@
 package gg.norisk.subwaysurfers.entity
 
-import gg.norisk.subwaysurfers.network.c2s.coinCollisionPacketC2S
-import gg.norisk.subwaysurfers.network.dto.toDto
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.passive.AnimalEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import software.bernie.geckolib.animatable.GeoEntity
 import software.bernie.geckolib.constant.DefaultAnimations
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
-import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar
+import software.bernie.geckolib.core.animation.AnimatableManager
 import software.bernie.geckolib.util.GeckoLibUtil
 
-class CoinEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity,
-    OriginMarker {
-    override var origin: BlockPos = this.blockPos
+class TrafficLightEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEntity(type, level), GeoEntity{
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
 
     override fun pushAwayFrom(entity: Entity?) {
@@ -26,18 +21,15 @@ class CoinEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEn
     override fun pushAway(entity: Entity?) {
     }
 
-    override fun onPlayerCollision(player: PlayerEntity) {
-        if (world.isClient) {
-            coinCollisionPacketC2S.send(this.origin.toDto())
-            this.discard()
-        }
-    }
+    override fun getBodyYaw(): Float = 180f
+    override fun getHeadYaw(): Float = 180f
+    override fun getYaw(): Float = 180f
 
     // Turn off step sounds since it's a bike
     override fun playStepSound(pos: BlockPos, block: BlockState) {}
 
     // Add our generic idle animation controller
-    override fun registerControllers(controllers: ControllerRegistrar) {
+    override fun registerControllers(controllers: AnimatableManager.ControllerRegistrar) {
         controllers.add(DefaultAnimations.genericIdleController(this))
     }
 
