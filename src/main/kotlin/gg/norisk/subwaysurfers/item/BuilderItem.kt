@@ -73,7 +73,14 @@ class BuilderItem(settings: Settings) : Item(settings) {
         val world = itemUsageContext.world
         if (!world.isClient && playerEntity != null) {
             val blockPos = itemUsageContext.blockPos
-            if (!this.use(playerEntity, world.getBlockState(blockPos), world, blockPos, true, itemUsageContext.stack)) {
+            val blockState = world.getBlockState(blockPos)
+            val direction = itemUsageContext.side
+            val blockPos2 = if (blockState.getCollisionShape(world, blockPos).isEmpty) {
+                blockPos
+            } else {
+                blockPos.offset(direction)
+            }
+            if (!this.use(playerEntity, world.getBlockState(blockPos), world, blockPos2, true, itemUsageContext.stack)) {
                 return ActionResult.FAIL
             }
         }
