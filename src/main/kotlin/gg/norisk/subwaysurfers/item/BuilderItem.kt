@@ -53,6 +53,9 @@ class BuilderItem(settings: Settings) : Item(settings) {
         HOVERBOARD(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             EntityRegistry.HOVERBOARD.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
         }),
+        BOOTS(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
+            EntityRegistry.BOOTS.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
+        }),
         TRAFFICLIGHT(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             EntityRegistry.TRAFFICLIGHT.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
         }),

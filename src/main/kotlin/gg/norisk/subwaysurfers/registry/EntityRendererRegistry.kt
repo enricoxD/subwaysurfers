@@ -8,6 +8,7 @@ object EntityRendererRegistry {
         EntityRendererRegistry.register(EntityRegistry.COIN, ::CoinRenderer)
         EntityRendererRegistry.register(EntityRegistry.TRAFFICLIGHT, ::TrafficLightRenderer)
         EntityRendererRegistry.register(EntityRegistry.HOVERBOARD, ::HoverboardRenderer)
+        EntityRendererRegistry.register(EntityRegistry.BOOTS, ::BootsRenderer)
         EntityRendererRegistry.register(EntityRegistry.TRAIN, ::TrainRenderer)
         EntityRendererRegistry.register(EntityRegistry.MAGNET, ::MagnetRenderer)
     }
