@@ -50,6 +50,9 @@ class BuilderItem(settings: Settings) : Item(settings) {
             val magnet =
                 EntityRegistry.MAGNET.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG) as MagnetEntity
         }),
+        HOVERBOARD(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
+            EntityRegistry.HOVERBOARD.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
+        }),
         TRAFFICLIGHT(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             EntityRegistry.TRAFFICLIGHT.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
         }),
@@ -80,7 +83,15 @@ class BuilderItem(settings: Settings) : Item(settings) {
             } else {
                 blockPos.offset(direction)
             }
-            if (!this.use(playerEntity, world.getBlockState(blockPos), world, blockPos2, true, itemUsageContext.stack)) {
+            if (!this.use(
+                    playerEntity,
+                    world.getBlockState(blockPos),
+                    world,
+                    blockPos2,
+                    true,
+                    itemUsageContext.stack
+                )
+            ) {
                 return ActionResult.FAIL
             }
         }
