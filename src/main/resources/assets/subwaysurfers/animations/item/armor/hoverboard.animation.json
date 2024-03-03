@@ -1,6 +1,16 @@
 {
-  "format_version": "1.8.0",
-  "animations": {
-  },
-  "geckolib_format_version": 2
+	"format_version": "1.8.0",
+	"animations": {
+		"misc.idle": {
+			"loop": "hold_on_last_frame",
+			"bones": {
+				"hoverboard": {
+					"scale": {
+						"vector": [2, 2, 2]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
 }

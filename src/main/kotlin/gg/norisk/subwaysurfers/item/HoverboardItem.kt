@@ -9,6 +9,7 @@ import net.minecraft.item.ArmorMaterials
 import net.minecraft.item.ItemStack
 import software.bernie.geckolib.animatable.GeoItem
 import software.bernie.geckolib.animatable.client.RenderProvider
+import software.bernie.geckolib.constant.DefaultAnimations
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager
 import software.bernie.geckolib.renderer.GeoArmorRenderer
@@ -47,6 +48,7 @@ class HoverboardItem(settings: Settings) : ArmorItem(
     }
 
     override fun registerControllers(controllers: AnimatableManager.ControllerRegistrar) {
+        controllers.add(DefaultAnimations.genericIdleController(this))
     }
 
     override fun getAnimatableInstanceCache(): AnimatableInstanceCache = cache

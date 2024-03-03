@@ -4,11 +4,11 @@
 		{
 			"description": {
 				"identifier": "geometry.unknown",
-				"texture_width": 128,
-				"texture_height": 128,
-				"visible_bounds_width": 4,
-				"visible_bounds_height": 4.5,
-				"visible_bounds_offset": [0, 1.75, 0]
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 1.5,
+				"visible_bounds_offset": [0, 0.25, 0]
 			},
 			"bones": [
 				{
@@ -27,16 +27,53 @@
 				{
 					"name": "armorBody",
 					"parent": "bipedBody",
-					"pivot": [0, 61, 0]
+					"pivot": [0, 24, 0]
 				},
 				{
 					"name": "hoverboard",
 					"parent": "armorBody",
-					"pivot": [0, -0.50334, 0.34266],
+					"pivot": [0, -1.2264, 0.02159],
 					"cubes": [
-						{"origin": [-6, -3, -15], "size": [12, 2, 31], "uv": [0, 0]},
-						{"origin": [-6, -1, -20], "size": [12, 2, 10], "pivot": [0, 3, -15], "rotation": [-35, 0, 0], "uv": [34, 35]},
-						{"origin": [-6, -18, 5], "size": [12, 2, 10], "pivot": [0, 5, -18], "rotation": [30, 0, 0], "uv": [0, 33]}
+						{
+							"origin": [-3, -8.5, 2.5],
+							"size": [6, 1, 2],
+							"pivot": [2, 13.5, -10.25],
+							"rotation": [22.5, 0, 0],
+							"uv": {
+								"north": {"uv": [24, 20], "uv_size": [12, 2]},
+								"east": {"uv": [24, 32], "uv_size": [4, 2]},
+								"south": {"uv": [24, 22], "uv_size": [12, 2]},
+								"west": {"uv": [28, 32], "uv_size": [4, 2]},
+								"up": {"uv": [24, 4], "uv_size": [12, 4]},
+								"down": {"uv": [24, 12], "uv_size": [12, -4]}
+							}
+						},
+						{
+							"origin": [-3, -2, -10],
+							"size": [6, 1, 20],
+							"uv": {
+								"north": {"uv": [24, 24], "uv_size": [12, 2]},
+								"east": {"uv": [24, 0], "uv_size": [40, 2]},
+								"south": {"uv": [24, 26], "uv_size": [12, 2]},
+								"west": {"uv": [24, 2], "uv_size": [40, 2]},
+								"up": {"uv": [0, 0], "uv_size": [12, 40]},
+								"down": {"uv": [12, 40], "uv_size": [12, -40]}
+							}
+						},
+						{
+							"origin": [-3, -1.75, -11.75],
+							"size": [6, 1, 2],
+							"pivot": [2, -1.5, -10.25],
+							"rotation": [-22.5, 0, 0],
+							"uv": {
+								"north": {"uv": [24, 28], "uv_size": [12, 2]},
+								"east": {"uv": [32, 32], "uv_size": [4, 2]},
+								"south": {"uv": [24, 30], "uv_size": [12, 2]},
+								"west": {"uv": [24, 34], "uv_size": [4, 2]},
+								"up": {"uv": [24, 12], "uv_size": [12, 4]},
+								"down": {"uv": [24, 20], "uv_size": [12, -4]}
+							}
+						}
 					]
 				},
 				{
