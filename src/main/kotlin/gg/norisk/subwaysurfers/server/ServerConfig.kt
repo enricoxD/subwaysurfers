@@ -10,35 +10,38 @@ import net.silkmc.silk.commands.command
 import java.io.File
 
 object ServerConfig {
+    private val json = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+        prettyPrint = true
+    }
+
     @Serializable
     data class Config(
-        var spawn: PositionDto,
-        var startPos: PositionDto
+        var spawn: PositionDto = PositionDto(0.5, -60.0, 0.5, 0f, 0f),
+        var startPos: PositionDto = PositionDto(8.5, -60.0, 8.5, 0f, 0f)
     )
 
     var configFile = File("config", "subwaysurfer-config.json")
-    var config = Config(
-        PositionDto(0.5, -60.0, 0.5, 0f, 0f),
-        PositionDto(8.5, -60.0, 8.5, 0f, 0f)
-    )
+    var config = Config()
 
     fun init() {
         configCommands()
         if (!configFile.exists()) {
             logger.info("Creating new config file")
-            configFile.writeText(Json.encodeToString(config))
+            configFile.writeText(json.encodeToString(config))
         }
-        config = Json.decodeFromString(configFile.readText())
+        config = json.decodeFromString(configFile.readText())
         logger.info("Loaded Server Config")
     }
 
     private fun load() {
-        config = Json.decodeFromString(configFile.readText())
+        config = json.decodeFromString(configFile.readText())
         logger.info("Loaded Server Config")
     }
 
     private fun save() {
-        configFile.writeText(Json.encodeToString(config))
+        configFile.writeText(json.encodeToString(config))
         logger.info("Saved config file")
     }
 

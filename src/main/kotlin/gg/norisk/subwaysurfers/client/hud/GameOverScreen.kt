@@ -1,6 +1,5 @@
 package gg.norisk.subwaysurfers.client.hud
 
-import ca.weblite.objc.Client
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
 import gg.norisk.subwaysurfers.network.c2s.homePacketC2S
 import gg.norisk.subwaysurfers.network.c2s.restartPacketC2S
@@ -18,7 +17,6 @@ import net.silkmc.silk.core.kotlin.ticks
 import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literal
 import net.silkmc.silk.core.text.literalText
-import kotlin.random.Random
 
 class GameOverScreen(val coins: Int, val score: Int) : BaseOwoScreen<FlowLayout>() {
     override fun createAdapter(): OwoUIAdapter<FlowLayout> {

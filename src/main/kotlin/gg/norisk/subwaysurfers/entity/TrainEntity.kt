@@ -50,9 +50,7 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableE
     override fun getYaw(): Float = 180f
 
     companion object {
-        val TRAIN_TYPES = 2
-        private val DRIVE: TrackedData<Boolean> =
-            DataTracker.registerData(TrainEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+        val TRAIN_TYPES = 4
         private val TYPE: TrackedData<Int> =
             DataTracker.registerData(TrainEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 

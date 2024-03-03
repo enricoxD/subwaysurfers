@@ -42,11 +42,6 @@ class BuilderItem(settings: Settings) : Item(settings) {
         TRAIN(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             EntityRegistry.TRAIN.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
         }),
-        DRIVEABLE_TRAIN(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
-            val train =
-                EntityRegistry.TRAIN.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG) as TrainEntity
-            train.shouldDrive = true
-        }),
         COIN(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             val coin =
                 EntityRegistry.COIN.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG) as CoinEntity
@@ -89,7 +84,7 @@ class BuilderItem(settings: Settings) : Item(settings) {
         livingEntity: LivingEntity,
         hand: Hand
     ): ActionResult {
-        if (itemStack.action() == Action.TRAIN || itemStack.action() == Action.DRIVEABLE_TRAIN && livingEntity is TrainEntity) {
+        if (itemStack.action() == Action.TRAIN && livingEntity is TrainEntity) {
             if (!playerEntity.world.isClient && livingEntity.isAlive) {
                 val train = livingEntity as TrainEntity
                 train.variation = if (train.variation + 1 >= TrainEntity.TRAIN_TYPES) {
