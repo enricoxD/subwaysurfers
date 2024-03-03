@@ -3,6 +3,7 @@
   "block.subwaysurfers.bottom_barrier": "Bottom Barrier",
   "block.subwaysurfers.top_barrier": "Top Barrier",
   "block.subwaysurfers.subway_rail": "Rail",
+  "block.subwaysurfers.trafficlight": "Traffic Light",
   "entity.subwaysurfers.train": "Train",
   "item.subwaysurfers.hoverboard": "Hoverboard",
   "item.subwaysurfers.builder": "Builder Util",

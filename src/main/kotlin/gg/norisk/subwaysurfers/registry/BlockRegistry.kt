@@ -16,6 +16,11 @@ object BlockRegistry {
             AbstractBlock.Settings.create().noCollision().nonOpaque().strength(0.7f).sounds(BlockSoundGroup.METAL)
         )
     )
+    val TRAFFICLIGHT = registerBlock(
+        "trafficlight", Block(
+            AbstractBlock.Settings.create().noCollision().nonOpaque()
+        )
+    )
     val BOTTOM_BARRIER = registerBlock(
         "bottom_barrier", BottomBarrierBlock(AbstractBlock.Settings.create().noCollision().nonOpaque())
     )
