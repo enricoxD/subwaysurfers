@@ -5,4 +5,8 @@ import gg.norisk.subwaysurfers.entity.TrainEntity
 import net.minecraft.client.render.entity.EntityRendererFactory
 import software.bernie.geckolib.renderer.GeoEntityRenderer
 
-class TrainRenderer(context: EntityRendererFactory.Context) : GeoEntityRenderer<TrainEntity>(context, TrainModel())
+class TrainRenderer(context: EntityRendererFactory.Context) : GeoEntityRenderer<TrainEntity>(context, TrainModel()) {
+    init {
+        withScale(1.8f,1.55f)
+    }
+}
