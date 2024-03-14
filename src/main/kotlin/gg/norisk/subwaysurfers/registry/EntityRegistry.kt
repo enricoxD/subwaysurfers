@@ -18,6 +18,7 @@ object EntityRegistry {
     val TRAIN: EntityType<TrainEntity> = registerMob("train", ::TrainEntity, 1.8f, 2.7f, 5.5f)
     val COIN: EntityType<CoinEntity> = registerMob("coin", ::CoinEntity, 0.3f, 0.3f)
     val HOVERBOARD: EntityType<HoverboardEntity> = registerMob("hoverboard", ::HoverboardEntity, 0.5f, 0.5f)
+    val JETPACK: EntityType<JetpackEntity> = registerMob("jetpack", ::JetpackEntity, 0.5f, 0.5f)
     val BOOTS: EntityType<BootsEntity> = registerMob("boots", ::BootsEntity, 0.5f, 0.5f)
     val TRAFFICLIGHT: EntityType<TrafficLightEntity> = registerMob("trafficlight", ::TrafficLightEntity, 1f, 2f)
     val MAGNET: EntityType<MagnetEntity> = registerMob("magnet", ::MagnetEntity, 0.3f, 0.3f)
@@ -28,6 +29,7 @@ object EntityRegistry {
         FabricDefaultAttributeRegistry.register(MAGNET, createGenericEntityAttributes())
         FabricDefaultAttributeRegistry.register(TRAFFICLIGHT, createGenericEntityAttributes())
         FabricDefaultAttributeRegistry.register(HOVERBOARD, createGenericEntityAttributes())
+        FabricDefaultAttributeRegistry.register(JETPACK, createGenericEntityAttributes())
         FabricDefaultAttributeRegistry.register(BOOTS, createGenericEntityAttributes())
     }
 
