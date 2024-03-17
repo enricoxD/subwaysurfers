@@ -42,17 +42,18 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         BlockRegistry.init()
         ItemRegistry.init()
         RailWorldManager.init()
-        StartCommand.init()
-        MovementInputListener.init()
         NetworkRegistry.init()
         serverDevCommands()
 
         if (FabricLoader.getInstance().isDevelopmentEnvironment || FabricLoader.getInstance().environmentType == EnvType.SERVER) {
+            StartCommand.init()
             SpeedManager.init()
             ItemEffectManager.init()
             PunishManager.init()
             PatternManager.init()
             ServerConfig.init()
+            ScreenListener.init()
+            MovementInputListener.init()
         }
     }
 
@@ -65,7 +66,6 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         BlockRendererRegistry.init()
         ClientAnimationListener.init()
         GameOverListener.init()
-        ScreenListener.init()
         ShaderManager.init()
         StructureManager.initClient()
         ClientGameStartLifeCycle.init()

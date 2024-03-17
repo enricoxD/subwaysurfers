@@ -1,5 +1,6 @@
 package gg.norisk.subwaysurfers.entity
 
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -25,7 +26,7 @@ class HoverboardEntity(type: EntityType<out AnimalEntity>, level: World) : Drive
     }
 
     override fun onPlayerCollision(player: PlayerEntity) {
-        if (world.isClient) {
+        if (world.isClient && player.isSubwaySurfers) {
             //TODO
             this.discard()
         }

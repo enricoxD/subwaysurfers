@@ -3,6 +3,7 @@ package gg.norisk.subwaysurfers.entity
 import gg.norisk.subwaysurfers.entity.TrainEntity.Companion.handleDiscard
 import gg.norisk.subwaysurfers.network.c2s.magnetCollisionPacketC2S
 import gg.norisk.subwaysurfers.network.dto.toDto
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.passive.AnimalEntity
@@ -35,7 +36,7 @@ class MagnetEntity(type: EntityType<out AnimalEntity>, level: World) : AnimalEnt
     }
 
     override fun onPlayerCollision(player: PlayerEntity) {
-        if (world.isClient) {
+        if (world.isClient && player.isSubwaySurfers) {
             magnetCollisionPacketC2S.send(this.blockPos.toDto())
             this.discard()
         }
