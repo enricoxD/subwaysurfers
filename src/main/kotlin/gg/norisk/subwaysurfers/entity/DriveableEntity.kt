@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.entity
 
 import gg.norisk.subwaysurfers.client.hud.NbtEditorScreen
 import gg.norisk.subwaysurfers.entity.TrainEntity.Companion.handleDiscard
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.data.DataTracker
@@ -29,6 +30,18 @@ open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : A
         }
 
     override var owner: UUID? = null
+
+
+    var startPos: Vec3d = pos
+    var isVisualTestDrive: Boolean = false
+        set(value) {
+            if (value) {
+                startPos = pos
+            } else {
+                this.setPosition(startPos)
+            }
+            field = value
+        }
 
     var shouldDrive: Boolean
         get() {
@@ -63,10 +76,26 @@ open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : A
         return super.interactMob(playerEntity, hand)
     }
 
-    override fun travel(pos: Vec3d) {
-        if (this.isAlive && shouldDrive && world.isClient) {
-            modifyVelocity(Vec3d(0.0, pos.y, -moveSpeed.toDouble()))
-            super.travel(pos)
+    override fun travel(moveVector: Vec3d) {
+        val shouldDrive = if (shouldDrive) {
+            if (owner != null) {
+                world.getPlayerByUuid(owner)?.isSubwaySurfers ?: false
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+
+        if (this.isAlive && (shouldDrive || isVisualTestDrive) && world.isClient) {
+            modifyVelocity(Vec3d(0.0, moveVector.y, -moveSpeed.toDouble()))
+
+            if (isVisualTestDrive) {
+                if (startPos.distanceTo(this.pos) >= 25) {
+                    isVisualTestDrive = false
+                }
+            }
+            super.travel(moveVector)
         }
     }
 
