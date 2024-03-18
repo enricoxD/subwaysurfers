@@ -32,7 +32,7 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableE
 
     override fun initDataTracker() {
         super.initDataTracker()
-        this.dataTracker.startTracking(TYPE, 1)
+        this.dataTracker.startTracking(TYPE, 0)
     }
 
     override fun writeCustomDataToNbt(nbtCompound: NbtCompound) {
