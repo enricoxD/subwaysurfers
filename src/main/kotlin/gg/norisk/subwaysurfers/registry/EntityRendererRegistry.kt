@@ -11,5 +11,6 @@ object EntityRendererRegistry {
         EntityRendererRegistry.register(EntityRegistry.BOOTS, ::BootsRenderer)
         EntityRendererRegistry.register(EntityRegistry.TRAIN, ::TrainRenderer)
         EntityRendererRegistry.register(EntityRegistry.MAGNET, ::MagnetRenderer)
+        EntityRendererRegistry.register(EntityRegistry.RAMP, ::RampRenderer)
     }
 }

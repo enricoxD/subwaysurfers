@@ -42,6 +42,9 @@ class BuilderItem(settings: Settings) : Item(settings) {
         TRAIN(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             EntityRegistry.TRAIN.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
         }),
+        RAMP(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
+            EntityRegistry.RAMP.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
+        }),
         COIN(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             val coin =
                 EntityRegistry.COIN.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG) as CoinEntity
@@ -157,7 +160,7 @@ class BuilderItem(settings: Settings) : Item(settings) {
         bl: Boolean,
         itemStack: ItemStack
     ): Boolean {
-        if (!playerEntity.isCreativeLevelTwoOp) return false
+        if (!playerEntity.isCreative) return false
 
         playerEntity.sendMessage("Position: ${blockPos.toShortString()}".literal)
 
