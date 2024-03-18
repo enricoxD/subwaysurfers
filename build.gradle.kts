@@ -10,7 +10,7 @@ val mcVersion = "1.20.4"
 val silkVersion = "1.10.3"
 
 group = "gg.norisk"
-version = "${mcVersion}-1.0.4"
+version = "${mcVersion}-1.0.5"
 
 repositories {
     mavenCentral()
