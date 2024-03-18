@@ -18,7 +18,7 @@ class RemoteDetonatorItem(settings: Settings) : Item(settings) {
         if (world.isClient) {
             val drivableEntities = world.getOtherEntities(
                 playerEntity,
-                Box.from(playerEntity.pos).expand(15.0)
+                Box.from(playerEntity.pos).expand(25.0)
             ) { it is DriveableEntity }.filterIsInstance<DriveableEntity>()
 
             for (drivableEntity in drivableEntities) {

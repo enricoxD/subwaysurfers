@@ -88,11 +88,13 @@ open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : A
         }
 
         if (this.isAlive && (shouldDrive || isVisualTestDrive) && world.isClient) {
-            modifyVelocity(Vec3d(0.0, moveVector.y, -moveSpeed.toDouble()))
+            if (this.shouldDrive) {
+                modifyVelocity(Vec3d(0.0, moveVector.y, -moveSpeed.toDouble()))
 
-            if (isVisualTestDrive) {
-                if (startPos.distanceTo(this.pos) >= 25) {
-                    isVisualTestDrive = false
+                if (isVisualTestDrive) {
+                    if (startPos.distanceTo(this.pos) >= 25) {
+                        isVisualTestDrive = false
+                    }
                 }
             }
             super.travel(moveVector)
