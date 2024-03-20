@@ -1,13 +1,18 @@
 package gg.norisk.subwaysurfers.worldgen
 
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle.fakeBlocks
+import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
+import net.minecraft.client.world.ClientWorld
+import net.minecraft.entity.Entity
 import net.minecraft.structure.StructurePlacementData
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.util.BlockMirror
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.MathHelper
 import net.silkmc.silk.core.text.literal
+import net.silkmc.silk.core.world.block.BlockInfo
 import java.util.*
 
 open class PatternGenerator(
@@ -21,6 +26,8 @@ open class PatternGenerator(
     var currentPatternStack: Stack<String> = patternStack.pop()
     var lastStructure: String = ""
     var currentStructure: StructureTemplate? = handleNextStructure()
+    var blocksToPlace = mutableMapOf<BlockPos, BlockState>()
+    val entitiesToPlace = mutableSetOf<Entity>()
 
     //TODO erstmal aktuelles Pattern ablaufen lassen bevor wir neu handlen.
     private fun handleNextStructure(): StructureTemplate? {
@@ -55,9 +62,17 @@ open class PatternGenerator(
             return
         }
 
-        if (nextZ < getGenerationPos(player, currentStructure!!)) {
+        val world = player.world as ClientWorld
 
-            val xOffset = calculateXOffset(currentStructure!!)
+        handleBlockPlace(player, world)
+        handleEntitySpawn(player, world)
+        handleStructurePlacement(player)
+    }
+
+    private fun handleStructurePlacement(player: ClientPlayerEntity) {
+        val toPlace = currentStructure ?: return
+        if (nextZ < getGenerationPos(player, toPlace)) {
+            val xOffset = calculateXOffset(toPlace)
 
             if (debug) {
                 player.sendMessage("Placing $lastStructure at $nextZ size ${currentStructure?.size}".literal)
@@ -66,16 +81,45 @@ open class PatternGenerator(
             StructureManager.placeStructure(
                 player,
                 BlockPos(startPos.x + xOffset, startPos.y, nextZ),
-                currentStructure!!,
+                toPlace,
                 StructurePlacementData().setMirror(mirror),
-                ignoreAir
+                ignoreAir,
+                blocksToPlace,
+                entitiesToPlace
             )
 
-            if (currentStructure != null) {
-                nextZ += (currentStructure?.size?.z ?: 0)
-            }
+            nextZ += toPlace.size.z
 
             currentStructure = handleNextStructure()
         }
+    }
+
+    private fun handleBlockPlace(player: ClientPlayerEntity, world: ClientWorld) {
+        val offset = MinecraftClient.getInstance().options.viewDistance.value * 16
+        val toRemove: MutableSet<BlockPos> = HashSet()
+        for (blockPos in blocksToPlace.keys) {
+            if (blockPos.z - offset < player.z) {
+                toRemove.add(blockPos)
+            }
+        }
+
+        for (blockPos in toRemove) {
+            world.setBlockState(blockPos, blocksToPlace[blockPos])
+            fakeBlocks.add(BlockInfo(Blocks.AIR.defaultState, blockPos))
+            blocksToPlace.remove(blockPos)
+        }
+    }
+
+    private fun handleEntitySpawn(player: ClientPlayerEntity, world: ClientWorld) {
+        val offset = MinecraftClient.getInstance().options.viewDistance.value * 16
+        val entitiesToRemove = mutableSetOf<Entity>()
+        for (entity in entitiesToPlace) {
+            if (entity.z - offset < player.z) {
+                world.addEntity(entity)
+                entity.streamSelfAndPassengers().forEach(world::spawnEntity)
+                entitiesToRemove.add(entity)
+            }
+        }
+        entitiesToPlace.removeAll(entitiesToRemove)
     }
 }

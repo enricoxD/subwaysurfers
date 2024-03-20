@@ -2,17 +2,18 @@ package gg.norisk.subwaysurfers.worldgen
 
 import com.google.common.cache.CacheBuilder
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
-import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate
 import gg.norisk.subwaysurfers.extensions.toStack
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_WORLD_TICK
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndWorldTick
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.datafixer.DataFixTypes
 import net.minecraft.datafixer.Schemas
+import net.minecraft.entity.Entity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.nbt.NbtIo
@@ -76,6 +77,8 @@ object StructureManager : EndWorldTick {
         template: StructureTemplate,
         placementData: StructurePlacementData = StructurePlacementData(),
         ignoreAir: Boolean = false,
+        blocks: MutableMap<BlockPos, BlockState>? = null,
+        entities: MutableSet<Entity>? = null,
     ) {
         val world = player.world as ClientWorld
 
@@ -86,7 +89,9 @@ object StructureManager : EndWorldTick {
             placementData,
             world.random,
             2,
-            ignoreAir
+            ignoreAir,
+            blocks,
+            entities
         )
     }
 

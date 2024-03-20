@@ -13,7 +13,9 @@ import net.minecraft.block.FluidFillable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.LootableInventory;
 import net.minecraft.nbt.NbtCompound;
@@ -47,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Mixin(StructureTemplate.class)
 public abstract class StructureTemplateMixin implements ClientStructureTemplate {
@@ -67,6 +70,11 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
     }
 
     @Unique
+    @Override
+    public void tick(@NotNull PlayerEntity player) {
+    }
+
+    @Unique
     private final Map<BlockPos, BlockState> blocks = new HashMap<>();
 
     @Unique
@@ -77,7 +85,8 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
             BlockRotation blockRotation,
             BlockPos blockPos2,
             @Nullable BlockBox blockBox,
-            boolean bl
+            boolean bl,
+            @Nullable Set<Entity> entities
     ) {
         for (StructureTemplate.StructureEntityInfo structureEntityInfo : this.entities) {
             BlockPos blockPos3 = transformAround(structureEntityInfo.blockPos, blockMirror, blockRotation, blockPos2).add(blockPos);
@@ -105,8 +114,12 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                         originMarker.setOrigin(entity.getBlockPos());
                     }
 
-                    world.addEntity(entity);
-                    entity.streamSelfAndPassengers().forEach(world::spawnEntity);
+                    if (entities != null) {
+                        entities.add(entity);
+                    } else {
+                        world.addEntity(entity);
+                        entity.streamSelfAndPassengers().forEach(world::spawnEntity);
+                    }
                 });
             }
         }
@@ -159,12 +172,13 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
 
     @Unique
     public boolean placeClient(
-            @NotNull ClientWorld serverWorldAccess,
+            @NotNull ClientWorld world,
             @NotNull BlockPos blockPos, @NotNull
             BlockPos blockPos2,
             @NotNull StructurePlacementData structurePlacementData,
-            @NotNull Random random, int i, boolean ignoreAir
-    ) {
+            @NotNull Random random, int i,
+            boolean ignoreAir,
+            @Nullable Map<BlockPos, BlockState> blocks, @Nullable Set<Entity> entities) {
         if (this.blockInfoLists.isEmpty()) {
             return false;
         } else {
@@ -184,23 +198,25 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                 int n = Integer.MIN_VALUE;
                 int o = Integer.MIN_VALUE;
 
-                for (StructureTemplate.StructureBlockInfo structureBlockInfo : processClient(serverWorldAccess, blockPos, blockPos2, structurePlacementData, list)) {
+                for (StructureTemplate.StructureBlockInfo structureBlockInfo : processClient(world, blockPos, blockPos2, structurePlacementData, list)) {
                     BlockPos blockPos3 = structureBlockInfo.comp_1341();
                     if (blockBox == null || blockBox.contains(blockPos3)) {
-                        FluidState fluidState = structurePlacementData.shouldPlaceFluids() ? serverWorldAccess.getFluidState(blockPos3) : null;
+                        FluidState fluidState = structurePlacementData.shouldPlaceFluids() ? world.getFluidState(blockPos3) : null;
                         BlockState blockState = structureBlockInfo.comp_1342().mirror(structurePlacementData.getMirror()).rotate(structurePlacementData.getRotation());
                         if (structureBlockInfo.comp_1343() != null) {
-                            BlockEntity blockEntity = serverWorldAccess.getBlockEntity(blockPos3);
+                            BlockEntity blockEntity = world.getBlockEntity(blockPos3);
                             Clearable.clear(blockEntity);
-                            serverWorldAccess.setBlockState(blockPos3, Blocks.BARRIER.getDefaultState(), 20);
-                            ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos3));
+                            //world.setBlockState(blockPos3, Blocks.BARRIER.getDefaultState(), 20);
+                            //ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos3));
                         }
 
                         if (blockState.isAir() && ignoreAir) {
                             continue;
                         }
 
-                        if (serverWorldAccess.setBlockState(blockPos3, blockState, i)) {
+                        if (blocks != null) {
+                            blocks.put(blockPos3, blockState);
+                        } else if (world.setBlockState(blockPos3, blockState, i)) {
                             ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos3));
                             j = Math.min(j, blockPos3.getX());
                             k = Math.min(k, blockPos3.getY());
@@ -210,7 +226,7 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                             o = Math.max(o, blockPos3.getZ());
                             list4.add(Pair.of(blockPos3, structureBlockInfo.comp_1343()));
                             if (structureBlockInfo.comp_1343() != null) {
-                                BlockEntity blockEntity = serverWorldAccess.getBlockEntity(blockPos3);
+                                BlockEntity blockEntity = world.getBlockEntity(blockPos3);
                                 if (blockEntity != null) {
                                     if (blockEntity instanceof LootableInventory) {
                                         structureBlockInfo.comp_1343().putLong("LootTableSeed", random.nextLong());
@@ -224,13 +240,15 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                                 if (blockState.getFluidState().isStill()) {
                                     list3.add(blockPos3);
                                 } else if (blockState.getBlock() instanceof FluidFillable) {
-                                    ((FluidFillable) blockState.getBlock()).tryFillWithFluid(serverWorldAccess, blockPos3, blockState, fluidState);
+                                    ((FluidFillable) blockState.getBlock()).tryFillWithFluid(world, blockPos3, blockState, fluidState);
                                     if (!fluidState.isStill()) {
                                         list2.add(blockPos3);
                                     }
                                 }
                             }
                         }
+
+
                     }
                 }
 
@@ -243,21 +261,21 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
 
                     while (iterator.hasNext()) {
                         BlockPos blockPos4 = iterator.next();
-                        FluidState fluidState2 = serverWorldAccess.getFluidState(blockPos4);
+                        FluidState fluidState2 = world.getFluidState(blockPos4);
 
                         for (int p = 0; p < directions.length && !fluidState2.isStill(); ++p) {
                             BlockPos blockPos5 = blockPos4.offset(directions[p]);
-                            FluidState fluidState3 = serverWorldAccess.getFluidState(blockPos5);
+                            FluidState fluidState3 = world.getFluidState(blockPos5);
                             if (fluidState3.isStill() && !list3.contains(blockPos5)) {
                                 fluidState2 = fluidState3;
                             }
                         }
 
                         if (fluidState2.isStill()) {
-                            BlockState blockState2 = serverWorldAccess.getBlockState(blockPos4);
+                            BlockState blockState2 = world.getBlockState(blockPos4);
                             Block block = blockState2.getBlock();
                             if (block instanceof FluidFillable) {
-                                ((FluidFillable) block).tryFillWithFluid(serverWorldAccess, blockPos4, blockState2, fluidState2);
+                                ((FluidFillable) block).tryFillWithFluid(world, blockPos4, blockState2, fluidState2);
                                 bl = true;
                                 iterator.remove();
                             }
@@ -274,24 +292,24 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                             voxelSet.set(blockPos6.getX() - j, blockPos6.getY() - k, blockPos6.getZ() - l);
                         }
 
-                        updateCorner(serverWorldAccess, i, voxelSet, j, k, l);
+                        updateCorner(world, i, voxelSet, j, k, l);
                     }
 
                     for (Pair<BlockPos, NbtCompound> pair2 : list4) {
                         BlockPos blockPos7 = pair2.getFirst();
                         if (!structurePlacementData.shouldUpdateNeighbors()) {
-                            BlockState blockState2 = serverWorldAccess.getBlockState(blockPos7);
-                            BlockState blockState3 = Block.postProcessState(blockState2, serverWorldAccess, blockPos7);
+                            BlockState blockState2 = world.getBlockState(blockPos7);
+                            BlockState blockState3 = Block.postProcessState(blockState2, world, blockPos7);
                             if (blockState2 != blockState3) {
-                                serverWorldAccess.setBlockState(blockPos7, blockState3, i & -2 | 16);
-                                ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos7));
+                                //world.setBlockState(blockPos7, blockState3, i & -2 | 16);
+                                //ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos7));
                             }
 
-                            serverWorldAccess.updateNeighbors(blockPos7, blockState3.getBlock());
+                            world.updateNeighbors(blockPos7, blockState3.getBlock());
                         }
 
                         if (pair2.getSecond() != null) {
-                            BlockEntity blockEntity = serverWorldAccess.getBlockEntity(blockPos7);
+                            BlockEntity blockEntity = world.getBlockEntity(blockPos7);
                             if (blockEntity != null) {
                                 blockEntity.markDirty();
                             }
@@ -301,13 +319,14 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
 
                 if (!structurePlacementData.shouldIgnoreEntities()) {
                     this.spawnEntitiesClient(
-                            serverWorldAccess,
+                            world,
                             blockPos,
                             structurePlacementData.getMirror(),
                             structurePlacementData.getRotation(),
                             structurePlacementData.getPosition(),
                             blockBox,
-                            structurePlacementData.shouldInitializeMobs()
+                            structurePlacementData.shouldInitializeMobs(),
+                            entities
                     );
                 }
 
