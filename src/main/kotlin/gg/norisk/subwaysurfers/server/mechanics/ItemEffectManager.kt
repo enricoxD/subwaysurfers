@@ -11,11 +11,9 @@ import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import kotlinx.coroutines.Job
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.silkmc.silk.core.task.mcCoroutineTask
-import net.silkmc.silk.core.text.literal
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
@@ -51,7 +49,7 @@ object ItemEffectManager {
                     it.baseValue *= 2
                 }
 
-                jetpackMap[player.uuid] = mcCoroutineTask(delay = 12.seconds) {
+                jetpackMap[player.uuid] = mcCoroutineTask(delay = 8.seconds) {
                     player.hasJetpack = false
                     player.inventory.armor[2] = ItemStack.EMPTY
                     player.inventory.updateItems()

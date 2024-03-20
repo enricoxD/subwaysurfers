@@ -2,7 +2,6 @@ package gg.norisk.subwaysurfers.client.model.entity
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.entity.BootsEntity
-import gg.norisk.subwaysurfers.entity.CoinEntity
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.util.Identifier
 import software.bernie.geckolib.model.DefaultedEntityGeoModel

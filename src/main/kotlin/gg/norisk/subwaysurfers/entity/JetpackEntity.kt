@@ -2,7 +2,6 @@ package gg.norisk.subwaysurfers.entity
 
 import gg.norisk.subwaysurfers.network.c2s.jetpackCollisionPacketC2S
 import gg.norisk.subwaysurfers.network.dto.toDto
-import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.passive.AnimalEntity

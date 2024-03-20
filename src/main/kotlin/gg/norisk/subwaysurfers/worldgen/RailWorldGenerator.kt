@@ -9,8 +9,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
-import kotlin.math.nextUp
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlin.random.Random
 
