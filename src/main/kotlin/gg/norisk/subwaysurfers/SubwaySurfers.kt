@@ -8,6 +8,7 @@ import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
 import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
+import gg.norisk.subwaysurfers.client.mechanics.JetpackMechanics
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
@@ -59,6 +60,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
     override fun onInitializeClient() {
         EntityRendererRegistry.init()
         ClientCollisionManager.init()
+        JetpackMechanics.init()
         ClientSettings.init()
         KeyboardInput.init()
         InGameHud.init()
