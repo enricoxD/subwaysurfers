@@ -1,10 +1,11 @@
 package gg.norisk.subwaysurfers.mixin.entity.player;
 
+import gg.norisk.subwaysurfers.common.item.CollectiblesKt;
+import gg.norisk.subwaysurfers.common.item.Powerup;
+import gg.norisk.subwaysurfers.common.item.PowerupKt;
 import gg.norisk.subwaysurfers.event.events.PlayerEvents;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -40,7 +41,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "tick", at = @At("HEAD"))
     private void tickInjection(CallbackInfo ci) {
         if (!this.getWorld().isClient) {
-            SubwaySurferKt.handleMagnet((PlayerEntity) (Object) this);
             SubwaySurferKt.handlePunishTicks((PlayerEntity) (Object) this);
         } else {
             if (horizontalCollision) {
@@ -83,8 +83,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Override
     public boolean hasNoGravity() {
+        var hasJetpack = PowerupKt.hasPowerUp((PlayerEntity) (Object) this, CollectiblesKt.getJetpack());
         if (!SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) return super.hasNoGravity();
-        else return SubwaySurferKt.getHasJetpack((PlayerEntity)(Object) this);
+        else return hasJetpack;
     }
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
@@ -101,7 +102,12 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         this.dataTracker.startTracking(SubwaySurferKt.getCoinDataTracker(), 0);
         this.dataTracker.startTracking(SubwaySurferKt.getSubwaySurfersTracker(), false);
         this.dataTracker.startTracking(SubwaySurferKt.getDebugModeTracker(), false);
-        this.dataTracker.startTracking(SubwaySurferKt.getMagnetTracker(), false);
-        this.dataTracker.startTracking(SubwaySurferKt.getJetpackTracker(), false);
+
+        // data trackers for power-ups
+        CollectiblesKt.getCollectibles().forEach(item -> {
+            if (item instanceof Powerup powerUp) {
+                this.dataTracker.startTracking(powerUp.getEndTimestampTracker(), 0L);
+            }
+        });
     }
 }

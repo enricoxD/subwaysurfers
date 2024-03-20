@@ -1,7 +1,8 @@
 package gg.norisk.subwaysurfers.mixin.client.render.entity;
 
 import gg.norisk.subwaysurfers.SubwaySurfers;
-import gg.norisk.subwaysurfers.registry.ItemRegistry;
+import gg.norisk.subwaysurfers.common.item.CollectiblesKt;
+import gg.norisk.subwaysurfers.common.item.PowerupKt;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -10,7 +11,6 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,7 +31,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
 
     @Inject(method = "getPositionOffset(Lnet/minecraft/client/network/AbstractClientPlayerEntity;F)Lnet/minecraft/util/math/Vec3d;", at = @At("RETURN"), cancellable = true)
     private void injected(AbstractClientPlayerEntity abstractClientPlayerEntity, float f, CallbackInfoReturnable<Vec3d> cir) {
-        if (abstractClientPlayerEntity.getEquippedStack(EquipmentSlot.CHEST).isOf(ItemRegistry.INSTANCE.getHOVERBOARD())) {
+        if (PowerupKt.hasPowerUp(abstractClientPlayerEntity, CollectiblesKt.getHoverboard())) {
             Vec3d returnValue = cir.getReturnValue();
             cir.setReturnValue(returnValue.add(0.0, 0.5, 0.0));
         }

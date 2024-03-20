@@ -17,25 +17,15 @@ import net.minecraft.registry.Registry
 object EntityRegistry {
     val TRAIN: EntityType<TrainEntity> = registerMob("train", ::TrainEntity, 1.8f, 2.7f, 5.5f)
     val RAMP: EntityType<RampEntity> = registerMob("ramp", ::RampEntity, 1.8f, 2.7f, 5.5f)
-    val COIN: EntityType<CoinEntity> = registerMob("coin", ::CoinEntity, 1f, 1f)
-    val HOVERBOARD: EntityType<HoverboardEntity> = registerMob("hoverboard", ::HoverboardEntity, 1f, 1f)
-    val JETPACK: EntityType<JetpackEntity> = registerMob("jetpack", ::JetpackEntity, 1f, 1f)
-    val BOOTS: EntityType<BootsEntity> = registerMob("boots", ::BootsEntity, 1f, 1f)
     val TRAFFICLIGHT: EntityType<TrafficLightEntity> = registerMob("trafficlight", ::TrafficLightEntity, 1f, 2f)
-    val MAGNET: EntityType<MagnetEntity> = registerMob("magnet", ::MagnetEntity, 1f, 1f)
 
     fun registerEntityAttributes() {
         FabricDefaultAttributeRegistry.register(TRAIN, createGenericEntityAttributes())
-        FabricDefaultAttributeRegistry.register(COIN, createGenericEntityAttributes())
-        FabricDefaultAttributeRegistry.register(MAGNET, createGenericEntityAttributes())
         FabricDefaultAttributeRegistry.register(TRAFFICLIGHT, createGenericEntityAttributes())
-        FabricDefaultAttributeRegistry.register(HOVERBOARD, createGenericEntityAttributes())
-        FabricDefaultAttributeRegistry.register(JETPACK, createGenericEntityAttributes())
-        FabricDefaultAttributeRegistry.register(BOOTS, createGenericEntityAttributes())
         FabricDefaultAttributeRegistry.register(RAMP, createGenericEntityAttributes())
     }
 
-    private fun createGenericEntityAttributes(): DefaultAttributeContainer.Builder {
+    fun createGenericEntityAttributes(): DefaultAttributeContainer.Builder {
         return PathAwareEntity.createLivingAttributes()
             .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.80000000298023224)
             .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 16.0).add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0)
@@ -43,7 +33,7 @@ object EntityRegistry {
             .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.1)
     }
 
-    private fun <T : MobEntity> registerMob(
+    fun <T : MobEntity> registerMob(
         name: String, entity: EntityType.EntityFactory<T>,
         width: Float, height: Float, length: Float = -1f
     ): EntityType<T> {

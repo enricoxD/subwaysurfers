@@ -16,9 +16,6 @@ import net.minecraft.text.Text
 import net.minecraft.util.Rarity
 
 object ItemRegistry {
-    val COIN: Item = registerItem("coin", Item(Item.Settings()))
-    val HOVERBOARD: Item = registerItem("hoverboard", HoverboardItem(Item.Settings()))
-    val JETPACK: Item = registerItem("jetpack", JetpackItem(Item.Settings()))
     val BUILDER: Item = registerItem("builder", BuilderItem(Item.Settings().maxCount(1).rarity(Rarity.EPIC)))
     val REMOTE_DETONATOR: Item = registerItem("remote_detonator", RemoteDetonatorItem(Item.Settings().maxCount(1).rarity(Rarity.EPIC)))
     val SUBWAY_RAIL: BlockItem = registerItem("subway_rail", BlockItem(BlockRegistry.SUBWAY_RAIL, Item.Settings()))
@@ -39,14 +36,12 @@ object ItemRegistry {
                 entries.add(SUBWAY_RAIL)
                 entries.add(TOP_BARRIER)
                 entries.add(BOTTOM_BARRIER)
-                entries.add(HOVERBOARD)
-                entries.add(JETPACK)
                 entries.add(BUILDER)
                 entries.add(REMOTE_DETONATOR)
             }.build()
     )
 
-    private fun <I : Item> registerItem(name: String, item: I): I {
+    fun <I : Item> registerItem(name: String, item: I): I {
         return Registry.register(Registries.ITEM, name.toId(), item)
     }
 }

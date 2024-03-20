@@ -9,15 +9,15 @@ import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle
 import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
-import gg.norisk.subwaysurfers.client.mechanics.JetpackMechanics
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
+import gg.norisk.subwaysurfers.common.item.Collectibles
+import gg.norisk.subwaysurfers.common.item.collectibles
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.StartCommand
 import gg.norisk.subwaysurfers.server.listener.BasicListener
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
 import gg.norisk.subwaysurfers.server.listener.ScreenListener
-import gg.norisk.subwaysurfers.server.mechanics.ItemEffectManager
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
@@ -49,7 +49,6 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         if (FabricLoader.getInstance().isDevelopmentEnvironment || FabricLoader.getInstance().environmentType == EnvType.SERVER) {
             StartCommand.init()
             SpeedManager.init()
-            ItemEffectManager.init()
             PunishManager.init()
             PatternManager.init()
             ServerConfig.init()
@@ -57,12 +56,13 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
             ScreenListener.init()
             MovementInputListener.init()
         }
+
+        Collectibles.register() // register entities, items etc. for surfer items
     }
 
     override fun onInitializeClient() {
         EntityRendererRegistry.init()
         ClientCollisionManager.init()
-        JetpackMechanics.init()
         ClientSettings.init()
         KeyboardInput.init()
         InGameHud.init()
@@ -73,6 +73,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         StructureManager.initClient()
         ClientGamePreStartLifeCycle.init()
         ClientGameRunningLifeCycle.init()
+        Collectibles.registerClient()
         devCommands()
     }
 

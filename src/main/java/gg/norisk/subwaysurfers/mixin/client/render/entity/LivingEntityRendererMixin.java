@@ -1,5 +1,7 @@
 package gg.norisk.subwaysurfers.mixin.client.render.entity;
 
+import gg.norisk.subwaysurfers.common.item.CollectiblesKt;
+import gg.norisk.subwaysurfers.common.item.PowerupKt;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -22,7 +24,7 @@ public class LivingEntityRendererMixin {
     public void injectedRender(LivingEntity livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         if (livingEntity instanceof ClientPlayerEntity player && SubwaySurferKt.isSubwaySurfers(player)) {
             float targetRotation;
-            if (SubwaySurferKt.getHasJetpack(player)) targetRotation = 80.0f;
+            if (PowerupKt.hasPowerUp(player, CollectiblesKt.getJetpack())) targetRotation = 80.0f;
             else targetRotation = 0.0f;
 
             // todo fps-independent lerp

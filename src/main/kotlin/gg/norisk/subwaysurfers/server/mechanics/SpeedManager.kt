@@ -1,7 +1,8 @@
 package gg.norisk.subwaysurfers.server.mechanics
 
+import gg.norisk.subwaysurfers.common.item.hasPowerUp
+import gg.norisk.subwaysurfers.common.item.jetpack
 import gg.norisk.subwaysurfers.server.ServerConfig
-import gg.norisk.subwaysurfers.subwaysurfers.hasJetpack
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import kotlinx.coroutines.Job
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -18,7 +19,7 @@ object SpeedManager {
             infiniteRoutine?.cancel()
             infiniteRoutine = infiniteMcCoroutineTask(period = 20.ticks) {
                 it.playerManager.playerList.filter {
-                    it.isSubwaySurfers && !it.hasJetpack
+                    it.isSubwaySurfers && !it.hasPowerUp(jetpack)
                 }.forEach {
                     // Gradually increase movement speed over time
                     it.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.let { attr ->

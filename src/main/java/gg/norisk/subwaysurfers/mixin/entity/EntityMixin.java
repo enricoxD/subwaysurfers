@@ -28,7 +28,7 @@ public abstract class EntityMixin {
     @Inject(method = "setPosition(DDD)V", at = @At("HEAD"), cancellable = true)
     public void setPosition(double x, double y, double z, CallbackInfo ci) {
         if ((Object) this instanceof ClientPlayerEntity player) {
-            if (SubwaySurferKt.isSubwaySurfers(player) && SubwaySurferKt.getHasJetpack(player)) {
+            if (SubwaySurferKt.isSubwaySurfers(player)) {
                 ci.cancel();
                 setPos(x, SubwaySurferKt.getJetpackY(player, y), z);
                 setBoundingBox(calculateBoundingBox());
