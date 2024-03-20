@@ -4,6 +4,7 @@ import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.item.BuilderItem
 import gg.norisk.subwaysurfers.item.HoverboardItem
 import gg.norisk.subwaysurfers.item.JetpackItem
+import gg.norisk.subwaysurfers.item.RemoteDetonatorItem
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -19,6 +20,7 @@ object ItemRegistry {
     val HOVERBOARD: Item = registerItem("hoverboard", HoverboardItem(Item.Settings()))
     val JETPACK: Item = registerItem("jetpack", JetpackItem(Item.Settings()))
     val BUILDER: Item = registerItem("builder", BuilderItem(Item.Settings().maxCount(1).rarity(Rarity.EPIC)))
+    val REMOTE_DETONATOR: Item = registerItem("remote_detonator", RemoteDetonatorItem(Item.Settings().maxCount(1).rarity(Rarity.EPIC)))
     val SUBWAY_RAIL: BlockItem = registerItem("subway_rail", BlockItem(BlockRegistry.SUBWAY_RAIL, Item.Settings()))
     val TOP_BARRIER: BlockItem = registerItem("top_barrier", BlockItem(BlockRegistry.TOP_BARRIER, Item.Settings()))
     val BOTTOM_BARRIER: BlockItem =
@@ -40,6 +42,7 @@ object ItemRegistry {
                 entries.add(HOVERBOARD)
                 entries.add(JETPACK)
                 entries.add(BUILDER)
+                entries.add(REMOTE_DETONATOR)
             }.build()
     )
 

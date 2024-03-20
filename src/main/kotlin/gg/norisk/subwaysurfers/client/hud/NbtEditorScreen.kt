@@ -11,8 +11,10 @@ import io.wispforest.owo.ui.component.SmallCheckboxComponent
 import io.wispforest.owo.ui.container.Containers
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.core.*
+import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.Entity
 import net.silkmc.silk.core.text.literal
+import net.silkmc.silk.core.text.literalText
 
 class NbtEditorScreen(val entity: Entity) : BaseOwoScreen<FlowLayout>() {
     override fun createAdapter(): OwoUIAdapter<FlowLayout> {
@@ -76,6 +78,22 @@ class NbtEditorScreen(val entity: Entity) : BaseOwoScreen<FlowLayout>() {
                 child(moveSpeedSlider)
             }
 
+            if (entity is DriveableEntity) {
+                val copyButton = Components.button("Copy".literal) {
+                    shouldDrive = shouldDriveCheckbox?.checked() ?: false
+                    moveSpeed = moveSpeedSlider?.value() ?: 0.3
+                    variant = variantSlider?.value()?.toInt() ?: 1
+                    MinecraftClient.getInstance().player?.sendMessage(literalText {
+                        text("Copied.")
+                        text(" shouldDrive: $shouldDrive")
+                        text(" moveSpeed: $moveSpeed")
+                        text(" variant: $variant")
+                    })
+                }
+                child(copyButton)
+            }
+
+
             val saveButton = Components.button("Save".literal) {
                 nbtChangePacketC2S.send(
                     NbtEditDto(
@@ -88,7 +106,30 @@ class NbtEditorScreen(val entity: Entity) : BaseOwoScreen<FlowLayout>() {
                 this@NbtEditorScreen.close()
             }
 
+            val pasteButton = Components.button("Paste".literal) {
+                moveSpeedSlider?.value(moveSpeed)
+                variantSlider?.value(variant.toDouble())
+                shouldDriveCheckbox?.checked(shouldDrive)
+
+                nbtChangePacketC2S.send(
+                    NbtEditDto(
+                        entity.uuid,
+                        moveSpeedSlider?.value()?.toFloat(),
+                        shouldDriveCheckbox?.checked(),
+                        variantSlider?.value()?.toInt()
+                    )
+                )
+                this@NbtEditorScreen.close()
+            }
+
             child(saveButton)
+            child(pasteButton)
         }
+    }
+
+    companion object {
+        var shouldDrive: Boolean = false
+        var moveSpeed: Double = 0.3
+        var variant: Int = 1
     }
 }

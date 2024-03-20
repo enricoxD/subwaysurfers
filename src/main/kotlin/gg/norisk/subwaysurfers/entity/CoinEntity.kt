@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.entity
 
 import gg.norisk.subwaysurfers.network.c2s.coinCollisionPacketC2S
 import gg.norisk.subwaysurfers.network.dto.toDto
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -27,7 +28,7 @@ class CoinEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEn
     }
 
     override fun onPlayerCollision(player: PlayerEntity) {
-        if (world.isClient) {
+        if (world.isClient && player.isSubwaySurfers) {
             coinCollisionPacketC2S.send(this.origin.toDto())
             this.discard()
         }
