@@ -12,6 +12,9 @@ interface ClientStructureTemplate {
         blockPos2: BlockPos,
         structurePlacementData: StructurePlacementData,
         random: Random,
-        i: Int
+        i: Int,
+        ignoreAir: Boolean,
     ): Boolean
+
+    fun tick()
 }

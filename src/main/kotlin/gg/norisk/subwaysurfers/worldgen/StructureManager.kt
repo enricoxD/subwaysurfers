@@ -74,7 +74,8 @@ object StructureManager : EndWorldTick {
         player: ClientPlayerEntity,
         pos: BlockPos,
         template: StructureTemplate,
-        placementData: StructurePlacementData = StructurePlacementData()
+        placementData: StructurePlacementData = StructurePlacementData(),
+        ignoreAir: Boolean = false,
     ) {
         val world = player.world as ClientWorld
 
@@ -84,7 +85,8 @@ object StructureManager : EndWorldTick {
             pos.add(Vec3i(0, 1, 0)),
             placementData,
             world.random,
-            2
+            2,
+            ignoreAir
         )
     }
 

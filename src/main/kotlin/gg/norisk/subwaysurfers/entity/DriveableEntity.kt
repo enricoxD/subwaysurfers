@@ -79,7 +79,8 @@ open class DriveableEntity(type: EntityType<out AnimalEntity>, level: World) : A
     override fun travel(moveVector: Vec3d) {
         val shouldDrive = if (shouldDrive) {
             if (owner != null) {
-                world.getPlayerByUuid(owner)?.isSubwaySurfers ?: false
+                val ownerEntity = world.getPlayerByUuid(owner)
+                ownerEntity?.isSubwaySurfers == true && ownerEntity.blockPos.z + 50 >= this.blockPos.z
             } else {
                 false
             }

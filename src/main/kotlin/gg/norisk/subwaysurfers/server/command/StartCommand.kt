@@ -1,24 +1,18 @@
 package gg.norisk.subwaysurfers.server.command
 
 import com.mojang.brigadier.context.CommandContext
-import gg.norisk.subwaysurfers.entity.UUIDMarker
 import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
 import gg.norisk.subwaysurfers.subwaysurfers.*
-import gg.norisk.subwaysurfers.worldgen.RailWorldManager
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.world.Heightmap
 import net.silkmc.silk.commands.command
-import net.silkmc.silk.core.kotlin.ticks
-import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literal
-import kotlin.math.roundToInt
 
 object StartCommand {
     fun init() {
@@ -59,6 +53,7 @@ object StartCommand {
 
     fun handleGameStop(player: ServerPlayerEntity) {
         gameOverScreenS2C.send(GameOverDto(player.coins, player.age), player)
+        PatternManager.playerPatterns.remove(player.uuid)
         player.isSubwaySurfers = false
         player.coins = 0
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
@@ -87,10 +82,12 @@ object StartCommand {
         pitchArg?.apply { settings.pitch = this }
 
         if (isEnabled) {
+            val pattern = PatternManager.playerPatterns.computeIfAbsent(player.uuid) { PatternManager.getRailPattern() }
+
             settings.patternPacket = PatternPacket(
-                PatternManager.currentPattern.left,
-                PatternManager.currentPattern.middle,
-                PatternManager.currentPattern.right
+                PatternManager.getEnvironmentPattern(),
+                pattern.map { it.path },
+                PatternManager.getEnvironmentPattern()
             )
 
             player.teleport(

@@ -18,7 +18,6 @@ import gg.norisk.subwaysurfers.server.mechanics.ItemEffectManager
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
-import gg.norisk.subwaysurfers.worldgen.RailWorldManager
 import gg.norisk.subwaysurfers.worldgen.StructureManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
@@ -41,7 +40,6 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         SoundRegistry.init()
         BlockRegistry.init()
         ItemRegistry.init()
-        RailWorldManager.init()
         NetworkRegistry.init()
         serverDevCommands()
 

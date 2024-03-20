@@ -7,6 +7,7 @@ import gg.norisk.subwaysurfers.extensions.toStack
 import gg.norisk.subwaysurfers.mixin.world.WorldAccessor
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfersOrSpectator
 import gg.norisk.subwaysurfers.worldgen.PatternGenerator
+import gg.norisk.subwaysurfers.worldgen.RailPatternGenerator
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
@@ -25,7 +26,7 @@ object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
     var fakeBlocks = mutableListOf<BlockInfo>()
 
     var leftWallPatternGenerator: PatternGenerator? = null
-    var railPatternGenerator: PatternGenerator? = null
+    var railPatternGenerator: RailPatternGenerator? = null
     var rightWallPatternGenerator: PatternGenerator? = null
 
     val clientGameStartEvent = Event.onlySync<Unit>()
@@ -46,10 +47,11 @@ object ClientGameStartLifeCycle : ClientTickEvents.EndWorldTick {
             startPos = ClientSettings.startPos!!.add(leftOffset + offset, -1.0, 0.0).toBlockPos(),
             patternStack = Stack<Stack<String>>().apply { add(ClientSettings.getLeftPattern().toStack()) }
         )
-        railPatternGenerator = PatternGenerator(
-            startPos = ClientSettings.startPos!!.add(-railOffset, -1.0, 0.0).toBlockPos(),
+        railPatternGenerator = RailPatternGenerator(
+            startPos = ClientSettings.startPos!!.add(0.0, -1.0, 0.0).toBlockPos(),
             patternStack = Stack<Stack<String>>().apply { add(ClientSettings.getMiddlePattern().toStack()) }
         )
+        railPatternGenerator!!.debug = true
         rightWallPatternGenerator = PatternGenerator(
             startPos = ClientSettings.startPos!!.add(rightOffset - offset, -1.0, 0.0).toBlockPos(),
             patternStack = Stack<Stack<String>>().apply { add(ClientSettings.getRightPattern().toStack()) },

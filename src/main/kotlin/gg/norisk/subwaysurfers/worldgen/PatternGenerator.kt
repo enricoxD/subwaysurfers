@@ -6,22 +6,27 @@ import net.minecraft.structure.StructurePlacementData
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.util.BlockMirror
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.MathHelper
+import net.silkmc.silk.core.text.literal
 import java.util.*
 
-class PatternGenerator(
+open class PatternGenerator(
     val startPos: BlockPos,
     var patternStack: Stack<Stack<String>>,
-    var mirror: BlockMirror = BlockMirror.NONE
+    var ignoreAir: Boolean = true,
+    var mirror: BlockMirror = BlockMirror.NONE,
 ) {
     var nextZ = startPos.z
+    var debug = false
     var currentPatternStack: Stack<String> = patternStack.pop()
-    var nextStructure: StructureTemplate? = StructureManager.readOrLoadTemplate(currentPatternStack.pop())
+    var lastStructure: String = ""
+    var currentStructure: StructureTemplate? = handleNextStructure()
 
     //TODO erstmal aktuelles Pattern ablaufen lassen bevor wir neu handlen.
-
     private fun handleNextStructure(): StructureTemplate? {
         if (currentPatternStack.isNotEmpty()) {
-            return StructureManager.readOrLoadTemplate(currentPatternStack.pop())
+            lastStructure = currentPatternStack.pop()
+            return StructureManager.readOrLoadTemplate(lastStructure)
         } else {
             if (patternStack.isNotEmpty()) {
                 currentPatternStack = patternStack.pop()
@@ -31,33 +36,46 @@ class PatternGenerator(
         }
     }
 
+    open fun calculateXOffset(structureTemplate: StructureTemplate): Int {
+        return if (mirror == BlockMirror.FRONT_BACK) {
+            structureTemplate.size.x + 1
+        } else {
+            0
+        }
+    }
+
+    open fun getGenerationPos(player: ClientPlayerEntity, structureTemplate: StructureTemplate): Int {
+        return player.blockPos.z + (MinecraftClient.getInstance().options.viewDistance.value * 12).coerceAtMost(94)
+    }
+
     fun tick(player: ClientPlayerEntity) {
-        if (nextStructure == null) {
+        if (currentStructure == null) {
             //TODO maybe hier z resetten?
-            nextStructure = handleNextStructure()
+            currentStructure = handleNextStructure()
             return
         }
 
-        if (nextZ < player.blockPos.z + MinecraftClient.getInstance().options.viewDistance.value * 6) {
+        if (nextZ < getGenerationPos(player, currentStructure!!)) {
 
-            val xOffset = if (mirror == BlockMirror.FRONT_BACK) {
-                nextStructure!!.size.x + 1
-            } else {
-                0
+            val xOffset = calculateXOffset(currentStructure!!)
+
+            if (debug) {
+                player.sendMessage("Placing $lastStructure at $nextZ size ${currentStructure?.size}".literal)
             }
 
             StructureManager.placeStructure(
                 player,
                 BlockPos(startPos.x + xOffset, startPos.y, nextZ),
-                nextStructure!!,
-                StructurePlacementData().setMirror(mirror)
+                currentStructure!!,
+                StructurePlacementData().setMirror(mirror),
+                ignoreAir
             )
 
-            nextStructure = handleNextStructure()
-
-            if (nextStructure != null) {
-                nextZ += (nextStructure?.size?.z ?: 0)
+            if (currentStructure != null) {
+                nextZ += (currentStructure?.size?.z ?: 0)
             }
+
+            currentStructure = handleNextStructure()
         }
     }
 }
