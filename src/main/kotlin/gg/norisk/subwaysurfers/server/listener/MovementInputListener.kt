@@ -1,20 +1,14 @@
 package gg.norisk.subwaysurfers.server.listener
 
-import gg.norisk.subwaysurfers.entity.TrainEntity
 import gg.norisk.subwaysurfers.network.c2s.MovementType
 import gg.norisk.subwaysurfers.network.c2s.movementTypePacket
 import gg.norisk.subwaysurfers.network.s2c.AnimationPacket
 import gg.norisk.subwaysurfers.network.s2c.playAnimationS2C
 import gg.norisk.subwaysurfers.registry.SoundRegistry
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager.punishHit
-import gg.norisk.subwaysurfers.subwaysurfers.dashStrength
-import gg.norisk.subwaysurfers.subwaysurfers.jumpStrength
-import gg.norisk.subwaysurfers.subwaysurfers.rail
-import gg.norisk.subwaysurfers.subwaysurfers.surfer
+import gg.norisk.subwaysurfers.subwaysurfers.*
 import net.minecraft.network.packet.s2c.play.PositionFlag
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
-import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.silkmc.silk.core.entity.modifyVelocity
 import net.silkmc.silk.core.task.mcCoroutineTask
@@ -26,6 +20,7 @@ object MovementInputListener {
             val player = context.player
 
             if (packet == MovementType.SLIDE) {
+                if (player.hasJetpack) return@receiveOnServer
                 playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))
 
                 // add downward velocity to player

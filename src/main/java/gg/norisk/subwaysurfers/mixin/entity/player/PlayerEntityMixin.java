@@ -108,6 +108,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
         }
     }
 
+    @Override
+    public boolean hasNoGravity() {
+        if (!SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) return super.hasNoGravity();
+        else return SubwaySurferKt.getHasJetpack((PlayerEntity)(Object) this);
+    }
+
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     private void initDataTrackerInjection(CallbackInfo ci) {
         this.dataTracker.startTracking(SLIDING, false);
@@ -123,6 +129,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
         this.dataTracker.startTracking(SubwaySurferKt.getCoinDataTracker(), 0);
         this.dataTracker.startTracking(SubwaySurferKt.getSubwaySurfersTracker(), false);
         this.dataTracker.startTracking(SubwaySurferKt.getMagnetTracker(), false);
+        this.dataTracker.startTracking(SubwaySurferKt.getJetpackTracker(), false);
     }
 
     @Override

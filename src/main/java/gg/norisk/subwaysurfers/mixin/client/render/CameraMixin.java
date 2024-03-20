@@ -34,7 +34,7 @@ public abstract class CameraMixin {
         var settings = ClientSettings.INSTANCE;
         if (settings.isEnabled() && settings.getStartPos() != null && entity instanceof PlayerEntity player) {
             var visualSettings = settings.getSettings();
-            // - interpolate x and y coordinates
+            // - interpolate x and y coordinates todo fix interpolation relative to fps
             // - offset camera up and forward
             customX = lerp(f * visualSettings.getCameraSpeedX(), customX, player.getX());
             customY = lerp(f * visualSettings.getCameraSpeedY(), lastCustomY, entity.getY() + visualSettings.getCameraOffsetY());

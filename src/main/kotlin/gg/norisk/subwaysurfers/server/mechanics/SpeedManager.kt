@@ -1,5 +1,6 @@
 package gg.norisk.subwaysurfers.server.mechanics
 
+import gg.norisk.subwaysurfers.subwaysurfers.hasJetpack
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.entity.attribute.EntityAttributes
 import net.silkmc.silk.core.annotations.ExperimentalSilkApi
@@ -23,7 +24,7 @@ object SpeedManager {
             // Increase speed for players
             infiniteMcCoroutineTask(period = 20.ticks) {
                 server.playerManager.playerList.filter {
-                    it.isSubwaySurfers
+                    it.isSubwaySurfers && !it.hasJetpack
                 }.forEach {
                     // Gradually increase movement speed over time
                     it.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.let { attr ->

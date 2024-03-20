@@ -1,9 +1,12 @@
 package gg.norisk.subwaysurfers.entity
 
+import gg.norisk.subwaysurfers.network.c2s.jetpackCollisionPacketC2S
+import gg.norisk.subwaysurfers.network.dto.toDto
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.passive.AnimalEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import software.bernie.geckolib.animatable.GeoEntity
@@ -23,8 +26,12 @@ class JetpackEntity(type: EntityType<out AnimalEntity>, level: World) : Driveabl
     override fun pushAway(entity: Entity?) {
     }
 
-    // Turn off step sounds since it's a bike
-    override fun playStepSound(pos: BlockPos, block: BlockState) {}
+    override fun onPlayerCollision(playerEntity: PlayerEntity?) {
+        if (world.isClient) {
+            jetpackCollisionPacketC2S.send(this.blockPos.toDto())
+            this.discard()
+        }
+    }
 
     // Add our generic idle animation controller
     override fun registerControllers(controllers: ControllerRegistrar) {

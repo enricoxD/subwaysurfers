@@ -33,6 +33,12 @@ object StartCommand {
                     this.source.playerOrThrow.sendMessage("Is Active: ${this.source.playerOrThrow.isMagnetic}".literal)
                 }
             }
+            literal("jetpack") {
+                runs {
+                    this.source.playerOrThrow.hasJetpack = !this.source.playerOrThrow.hasJetpack
+                    this.source.playerOrThrow.sendMessage("Is Active: ${this.source.playerOrThrow.hasJetpack}".literal)
+                }
+            }
             literal("flydebug") {
                 runs {
                     this.source.playerOrThrow.isSubwaySurfers = !this.source.playerOrThrow.isSubwaySurfers

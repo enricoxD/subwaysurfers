@@ -1,7 +1,7 @@
 package gg.norisk.subwaysurfers.subwaysurfers
 
+import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.entity.CoinEntity
-import gg.norisk.subwaysurfers.registry.NetworkRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.MathHelper
 import net.silkmc.silk.core.entity.directionVector
 import net.silkmc.silk.core.entity.modifyVelocity
-import org.joml.Vector3f
 
 interface SubwaySurfer {
     var isSliding: Boolean
@@ -118,6 +117,14 @@ var PlayerEntity.isMagnetic: Boolean
         this.dataTracker.set(magnetTracker, value)
     }
 
+var PlayerEntity.hasJetpack: Boolean
+    get() {
+        return this.dataTracker.get(magnetTracker)
+    }
+    set(value) {
+        this.dataTracker.set(magnetTracker, value)
+    }
+
 var PlayerEntity.coins: Int
     get() {
         return this.dataTracker.get(coinDataTracker)
@@ -145,6 +152,16 @@ fun PlayerEntity.handleMagnet() {
     }
 }
 
+fun PlayerEntity.getJetpackY(origY: Double): Double {
+    val y = ClientSettings.startPos?.y ?: return origY
+    val targetY = y + 6.0
+    val currentY = MathHelper.lerp(0.1, origY, targetY)
+    if (hasJetpack) {
+        return currentY
+    }
+    return origY
+}
+
 val coinDataTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val dashStrengthTracker =
@@ -168,6 +185,8 @@ val punishTicksTracker =
 val subwaySurfersTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val magnetTracker =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+val jetpackTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 
 val PlayerEntity.surfer get() = this as SubwaySurfer
