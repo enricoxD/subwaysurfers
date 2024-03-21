@@ -99,12 +99,12 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
     }
 
     private fun devCommands() {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment) {
-            clientCommand("curvedshader") {
-                runs {
-                    ShaderManager.loadCurvedShader()
-                }
+        clientCommand("curvedshader") {
+            runs {
+                ShaderManager.loadCurvedShader()
             }
+        }
+        if (FabricLoader.getInstance().isDevelopmentEnvironment) {
             clientCommand("testscreen") {
                 literal("gameover") {
                     runs {

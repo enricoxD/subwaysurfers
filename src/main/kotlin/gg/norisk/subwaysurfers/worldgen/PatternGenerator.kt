@@ -1,7 +1,6 @@
 package gg.norisk.subwaysurfers.worldgen
 
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle
-import gg.norisk.subwaysurfers.subwaysurfers.debugMode
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
@@ -11,9 +10,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.structure.StructurePlacementData
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.util.BlockMirror
-import net.minecraft.util.Colors
 import net.minecraft.util.math.BlockPos
-import net.silkmc.silk.core.text.literalText
 import net.silkmc.silk.core.world.block.BlockInfo
 import java.util.*
 
@@ -96,7 +93,7 @@ open class PatternGenerator(
     }
 
     private fun handleBlockPlace(player: ClientPlayerEntity, world: ClientWorld) {
-        val offset = MinecraftClient.getInstance().options.viewDistance.value * 16
+        val offset = 8 * 16
         val toRemove: MutableSet<BlockPos> = HashSet()
         for (blockPos in blocksToPlace.keys) {
             if (blockPos.z - offset < player.z) {
@@ -112,7 +109,7 @@ open class PatternGenerator(
     }
 
     private fun handleEntitySpawn(player: ClientPlayerEntity, world: ClientWorld) {
-        val offset = MinecraftClient.getInstance().options.viewDistance.value * 16
+        val offset = 8 * 16
         val entitiesToRemove = mutableSetOf<Entity>()
         for (entity in entitiesToPlace) {
             if (entity.z - offset < player.z) {

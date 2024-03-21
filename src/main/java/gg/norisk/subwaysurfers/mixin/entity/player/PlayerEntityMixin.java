@@ -8,9 +8,7 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,19 +27,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow
     public abstract float getMovementSpeed();
 
-    @Shadow
-    public abstract void sendMessage(Text text, boolean bl);
-
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
-    }
-
-    @Override
-    public void onTrackedDataSet(TrackedData<?> data) {
-        super.onTrackedDataSet(data);
-        if (SubwaySurferKt.getSlidingTracker().equals(data)) {
-            calculateDimensions();
-        }
     }
 
     @Override
@@ -57,7 +44,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             SubwaySurferKt.handlePunishTicks((PlayerEntity) (Object) this);
         } else {
             if (horizontalCollision) {
-                PlayerEvents.INSTANCE.getHorionztalCollisionEvent().invoke(new PlayerEvents.PlayerHorionztalCollisionEvent((PlayerEntity) (Object) this));
+                //PlayerEvents.INSTANCE.getHorionztalCollisionEvent().invoke(new PlayerEvents.PlayerHorionztalCollisionEvent((PlayerEntity) (Object) this));
             }
         }
     }
@@ -68,12 +55,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         if (SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) {
             ci.cancel();
         }
-    }
-
-    @Inject(method = "getDimensions", at = @At("RETURN"), cancellable = true)
-    private void slidingHitboxInjection(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
-        if (SubwaySurferKt.isSliding((PlayerEntity) (Object) this))
-            cir.setReturnValue(EntityDimensions.fixed(0.2f, 0.2f));
     }
 
     @Inject(method = "getOffGroundSpeed", at = @At("HEAD"), cancellable = true)
@@ -112,7 +93,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         this.dataTracker.startTracking(SubwaySurferKt.getGravityTracker(), 0.3f);
         this.dataTracker.startTracking(SubwaySurferKt.getDashStrengthTracker(), 2.0f);
         this.dataTracker.startTracking(SubwaySurferKt.getMultiplierTracker(), 1);
-        this.dataTracker.startTracking(SubwaySurferKt.getJumpStrengthTracker(), 1.8f);
         this.dataTracker.startTracking(SubwaySurferKt.getRailDataTracker(), 1);
         this.dataTracker.startTracking(SubwaySurferKt.getLastPatternUpdatePosTracker(), 0);
         this.dataTracker.startTracking(SubwaySurferKt.getLastBlockCollisionPosTracker(), 0);

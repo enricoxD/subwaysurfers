@@ -4,6 +4,7 @@ import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
@@ -32,6 +34,16 @@ public abstract class LivingEntityMixin extends Entity {
             }
         }
         return constant;
+    }
+
+    @Inject(method = "onTrackedDataSet", at = @At("TAIL"))
+    private void injected(TrackedData<?> data, CallbackInfo ci) {
+        if (getType() == EntityType.PLAYER) {
+            var player = (PlayerEntity) (Object) this;
+            if (SubwaySurferKt.getSlidingTracker().equals(data)) {
+                calculateDimensions();
+            }
+        }
     }
 
     @Inject(method = "getMovementSpeed(F)F", at = @At("RETURN"), cancellable = true)

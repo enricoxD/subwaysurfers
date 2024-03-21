@@ -43,14 +43,6 @@ var PlayerEntity.gravity: Double
         this.dataTracker.set(gravityTracker, value.toFloat())
     }
 
-var PlayerEntity.jumpStrength: Double
-    get() {
-        return this.dataTracker.get(jumpStrengthTracker).toDouble()
-    }
-    set(value) {
-        this.dataTracker.set(jumpStrengthTracker, value.toFloat())
-    }
-
 var PlayerEntity.dashStrength: Double
     get() {
         return this.dataTracker.get(dashStrengthTracker).toDouble()
@@ -179,8 +171,6 @@ val coinDataTracker =
 val dashStrengthTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.FLOAT)
 val gravityTracker =
-    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.FLOAT)
-val jumpStrengthTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.FLOAT)
 val railDataTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
