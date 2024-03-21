@@ -1,6 +1,5 @@
 package gg.norisk.subwaysurfers.server.mechanics
 
-import gg.norisk.subwaysurfers.SubwaySurfers
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
 import gg.norisk.subwaysurfers.network.c2s.trackListRequestPacketC2S
 import gg.norisk.subwaysurfers.network.s2c.*
@@ -10,6 +9,7 @@ import gg.norisk.subwaysurfers.utils.HashUtils
 import gg.norisk.subwaysurfers.worldgen.pattern.RailPattern
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -17,23 +17,17 @@ import java.io.File
 import java.util.*
 import kotlin.math.absoluteValue
 
-object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load {
+object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, ServerEntityEvents.Unload {
     val NEW_PATTERN_DISTANCE = 20
     val rails = mutableSetOf<RailPattern>()
     val sides = mutableSetOf<Pair<TrackInfo, File>>()
-    val houses = listOf(
-        "subway_house_1",
-        "subway_house_2",
-        "subway_house_3",
-        "subway_house_4",
-        "subway_house_5",
-        "subway_house_6",
-        "subway_house_7",
-        "subway_house_8",
-        "subway_house_9",
-        "subway_house_10",
-        "subway_house_11",
-    )
+    val nbtFolder = if (FabricLoader.getInstance().isDevelopmentEnvironment) {
+        File(File("").absoluteFile.parentFile, "nbt")
+    } else {
+        File("config", "nbt")
+    }.apply {
+        mkdirs()
+    }
 
     //TODO das clearen wenn spieler leaved etc vergess ich eh lol
     val playerPatterns = mutableMapOf<UUID, List<RailPattern>>()
@@ -41,6 +35,7 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load {
     fun init() {
         ServerTickEvents.END_WORLD_TICK.register(this)
         ServerEntityEvents.ENTITY_LOAD.register(this)
+        ServerEntityEvents.ENTITY_UNLOAD.register(this)
         loadAllSides()
         loadAllTracks()
         trackListRequestPacketC2S.receiveOnServer { packet, context -> handleTrackListRequest(packet, context.player) }
@@ -65,25 +60,25 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load {
     }
 
     private fun loadAllSides() {
-        val sidesFolder = File(javaClass.getResource("/structures/sides/").toURI())
+        val sidesFolder = File(nbtFolder, "sides")
         for (file in sidesFolder.walkTopDown()) {
             if (file.extension == "nbt") {
                 val sideInfo = TrackInfo(file.nameWithoutExtension, HashUtils.md5(file.readBytes()))
-                logger.info("Added $sideInfo")
+                logger.info("Added: $sideInfo")
                 sides.add(Pair(sideInfo, file))
             }
         }
     }
 
     private fun loadAllTracks() {
-        val railFolder = File(javaClass.getResource("/structures/rails/").toURI())
+        val railFolder = File(nbtFolder, "rails")
         for (file in railFolder.walkTopDown()) {
             if (file.extension == "nbt") {
                 val railPattern = RailPattern(
-                    file.path.substringAfterLast("structures").replace("\\", "/") //TODO das könnte breaken?
+                    file.path.substringAfterLast("rails").replace("\\", "/") //TODO das könnte breaken?
                         .substring(1).replace(".nbt", ""), file, HashUtils.md5(file.readBytes())
                 )
-                logger.info("RailPattern: $railPattern")
+                logger.info("Added: $railPattern")
                 rails.add(railPattern)
             }
         }
@@ -94,7 +89,6 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load {
             val pos = playerEntity.z.absoluteValue.toInt()
             if (pos.mod(NEW_PATTERN_DISTANCE) == 0 && pos != playerEntity.lastPatternUpdatePos) {
                 playerEntity.lastPatternUpdatePos = pos
-                logger.info("Sending new Pattern to ${playerEntity.name}")
 
                 val lastPatterns = playerPatterns[playerEntity.uuid] ?: getRailPattern()
                 val nextPattern = getRailPattern(firstTrack = lastPatterns.last())
@@ -112,7 +106,7 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load {
     fun getEnvironmentPattern(length: Int = 20): List<String> {
         return buildList {
             repeat(length) {
-                add(houses.random())
+                add(sides.random().first.name)
             }
         }
     }
@@ -146,5 +140,10 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load {
         val sideList = sides.map { it.first }
         railList.addAll(sideList)
         trackListPacketS2C.send(railList, player)
+    }
+
+    override fun onUnload(entity: Entity, world: ServerWorld) {
+        val player = entity as? ServerPlayerEntity ?: return
+        playerPatterns.remove(player.uuid)
     }
 }

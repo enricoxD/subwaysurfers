@@ -1,7 +1,7 @@
 package gg.norisk.subwaysurfers.worldgen
 
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle
-import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle.fakeBlocks
+import gg.norisk.subwaysurfers.subwaysurfers.debugMode
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
@@ -11,8 +11,9 @@ import net.minecraft.entity.Entity
 import net.minecraft.structure.StructurePlacementData
 import net.minecraft.structure.StructureTemplate
 import net.minecraft.util.BlockMirror
+import net.minecraft.util.Colors
 import net.minecraft.util.math.BlockPos
-import net.silkmc.silk.core.text.literal
+import net.silkmc.silk.core.text.literalText
 import net.silkmc.silk.core.world.block.BlockInfo
 import java.util.*
 
@@ -75,8 +76,17 @@ open class PatternGenerator(
         if (nextZ < getGenerationPos(player, toPlace)) {
             val xOffset = calculateXOffset(toPlace)
 
-            if (debug) {
-                player.sendMessage("Placing $lastStructure at $nextZ size ${currentStructure?.size}".literal)
+            if (player.debugMode) {
+                player.sendMessage(literalText {
+                    text("Placing ")
+                    text(lastStructure) {
+                        color = Colors.YELLOW
+                    }
+                    text(" at ")
+                    text(nextZ.toString()) {
+                        color = Colors.YELLOW
+                    }
+                })
             }
 
             StructureManager.placeStructure(

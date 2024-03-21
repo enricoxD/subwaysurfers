@@ -101,6 +101,13 @@ val PlayerEntity.isSubwaySurfersOrSpectator: Boolean
         return this.dataTracker.get(subwaySurfersTracker) or false
     }
 
+var PlayerEntity.debugMode: Boolean
+    get() {
+        return this.dataTracker.get(debugModeTracker)
+    }
+    set(value) {
+        this.dataTracker.set(debugModeTracker, value)
+    }
 
 var PlayerEntity.isSubwaySurfers: Boolean
     get() {
@@ -166,6 +173,8 @@ val multiplierTracker =
 val punishTicksTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val subwaySurfersTracker =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+val debugModeTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val magnetTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)

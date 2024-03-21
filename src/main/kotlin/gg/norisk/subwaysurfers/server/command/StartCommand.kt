@@ -15,25 +15,18 @@ import net.minecraft.sound.SoundEvents
 import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.kotlin.ticks
 import net.silkmc.silk.core.task.mcCoroutineTask
-import net.silkmc.silk.core.text.literal
+import net.silkmc.silk.core.text.literalText
 
 object StartCommand {
     fun init() {
         command("subwaysurfers") {
-            literal("pattern") {
+            literal("debug") {
                 runs {
-                }
-            }
-            literal("magnet") {
-                runs {
-                    this.source.playerOrThrow.isMagnetic = !this.source.playerOrThrow.isMagnetic
-                    this.source.playerOrThrow.sendMessage("Is Active: ${this.source.playerOrThrow.isMagnetic}".literal)
-                }
-            }
-            literal("flydebug") {
-                runs {
-                    this.source.playerOrThrow.isSubwaySurfers = !this.source.playerOrThrow.isSubwaySurfers
-                    this.source.playerOrThrow.sendMessage("Is Active: ${this.source.playerOrThrow.isSubwaySurfers}".literal)
+                    val player = this.source.playerOrThrow
+                    player.debugMode = !player.debugMode
+                    player.sendMessage(literalText("Debug Mode: ") {
+                        text(player.debugMode.toString())
+                    })
                 }
             }
             literal("stop") {

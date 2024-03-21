@@ -9,10 +9,10 @@ data class RailPattern(val path: String, val file: File, val hash: String) {
 
     init {
         val splittedName = path.split("/")
-        val startColorsString = splittedName[1]
-        val endColorsString = splittedName[2]
+        val startColorsString = splittedName[0]
+        val endColorsString = splittedName[1]
 
-        railName = splittedName[3]
+        railName = splittedName[2]
         startColors = startColorsString.split("_")
         endColors = endColorsString.split("_")
     }

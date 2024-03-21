@@ -122,6 +122,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
         this.dataTracker.startTracking(SubwaySurferKt.getPunishTicksTracker(), 0);
         this.dataTracker.startTracking(SubwaySurferKt.getCoinDataTracker(), 0);
         this.dataTracker.startTracking(SubwaySurferKt.getSubwaySurfersTracker(), false);
+        this.dataTracker.startTracking(SubwaySurferKt.getDebugModeTracker(), false);
         this.dataTracker.startTracking(SubwaySurferKt.getMagnetTracker(), false);
     }
 
