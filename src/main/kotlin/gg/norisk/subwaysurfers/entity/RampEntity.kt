@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.passive.AnimalEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
@@ -33,10 +34,17 @@ class RampEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableEn
     override fun getYaw(): Float = 180f
 
     override fun collidesWith(entity: Entity): Boolean {
-        if (entity is RampEntity) {
+        if (entity is RampEntity || entity is PlayerEntity) {
             return false
         }
         return super.collidesWith(entity)
+    }
+
+    override fun onPlayerCollision(playerEntity: PlayerEntity) {
+        super.onPlayerCollision(playerEntity)
+        if (world.isClient) {
+            playerEntity.setPosition(playerEntity.x, playerEntity.y + 2, playerEntity.z)
+        }
     }
 
     override fun isLogicalSideForUpdatingMovement(): Boolean = true
