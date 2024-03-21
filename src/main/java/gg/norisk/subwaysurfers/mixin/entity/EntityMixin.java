@@ -33,6 +33,8 @@ public abstract class EntityMixin {
                 setPos(x, SubwaySurferKt.getJetpackY(player, y), z);
                 setBoundingBox(calculateBoundingBox());
             }
+        }
+    }
 
     @Redirect(method = "calculateDimensions", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;dimensions:Lnet/minecraft/entity/EntityDimensions;", opcode = Opcodes.PUTFIELD))
     private void injected(Entity instance, EntityDimensions value) {
