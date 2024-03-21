@@ -57,12 +57,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
-    @Inject(method = "getDimensions", at = @At("RETURN"), cancellable = true)
-    private void slidingHitboxInjection(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
-        if (SubwaySurferKt.isSliding((PlayerEntity) (Object) this))
-            cir.setReturnValue(EntityDimensions.fixed(0.2f, 0.2f));
-    }
-
     @Inject(method = "getOffGroundSpeed", at = @At("HEAD"), cancellable = true)
     private void getOffGroundSpeedInjection(CallbackInfoReturnable<Float> cir) {
         if (SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) {
