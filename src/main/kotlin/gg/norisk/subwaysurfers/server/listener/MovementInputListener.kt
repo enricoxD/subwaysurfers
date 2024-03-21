@@ -36,7 +36,7 @@ object MovementInputListener {
                         0.4f,
                         0.8f
                     ))
-                    mcCoroutineTask(delay = 20.ticks) {
+                    mcCoroutineTask(delay = ServerConfig.config.slidingTicks.ticks) {
                         player.isSliding = false
                     }
                 }
