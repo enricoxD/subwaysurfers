@@ -25,7 +25,8 @@ object ServerConfig {
         var surferAcceleration: Double = 0.005,
     )
 
-    var configFile = File("config", "subwaysurfer-config.json")
+    var configFolder = File("config", "subwaysurfers").apply { mkdirs() }
+    var configFile = File(configFolder, "config.json")
     var config = Config()
 
     fun init() {

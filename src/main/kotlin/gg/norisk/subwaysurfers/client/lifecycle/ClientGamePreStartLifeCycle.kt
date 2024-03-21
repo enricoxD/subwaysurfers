@@ -40,7 +40,6 @@ object ClientGamePreStartLifeCycle {
                 startPos = startPos.add(0.0, -1.0, 0.0).toBlockPos(),
                 patternStack = Stack<Stack<String>>().apply { add(pattern.middle.toStack()) }
             )
-            railPatternGenerator!!.debug = true
             rightWallPatternGenerator = PatternGenerator(
                 startPos = startPos.add(rightOffset - offset, -1.0, 0.0).toBlockPos(),
                 patternStack = Stack<Stack<String>>().apply { add(pattern.right.toStack()) },

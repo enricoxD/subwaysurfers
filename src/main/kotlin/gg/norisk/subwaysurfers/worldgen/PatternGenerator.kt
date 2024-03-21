@@ -24,7 +24,6 @@ open class PatternGenerator(
     var mirror: BlockMirror = BlockMirror.NONE,
 ) {
     var nextZ = startPos.z
-    var debug = false
     var currentPatternStack: Stack<String> = patternStack.pop()
     var lastStructure: String = ""
     var currentStructure: StructureTemplate? = handleNextStructure()
@@ -71,23 +70,12 @@ open class PatternGenerator(
         handleStructurePlacement(player)
     }
 
+    open fun onPlace(player: ClientPlayerEntity) {}
+
     private fun handleStructurePlacement(player: ClientPlayerEntity) {
         val toPlace = currentStructure ?: return
         if (nextZ < getGenerationPos(player, toPlace)) {
             val xOffset = calculateXOffset(toPlace)
-
-            if (player.debugMode) {
-                player.sendMessage(literalText {
-                    text("Placing ")
-                    text(lastStructure) {
-                        color = Colors.YELLOW
-                    }
-                    text(" at ")
-                    text(nextZ.toString()) {
-                        color = Colors.YELLOW
-                    }
-                })
-            }
 
             StructureManager.placeStructure(
                 player,
@@ -98,6 +86,8 @@ open class PatternGenerator(
                 blocksToPlace,
                 entitiesToPlace
             )
+
+            onPlace(player)
 
             nextZ += toPlace.size.z
 

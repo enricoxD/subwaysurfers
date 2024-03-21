@@ -24,7 +24,7 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
     val nbtFolder = if (FabricLoader.getInstance().isDevelopmentEnvironment) {
         File(File("").absoluteFile.parentFile, "nbt")
     } else {
-        File("config", "nbt")
+        File("config", "subwaysurfers/nbt")
     }.apply {
         mkdirs()
     }
