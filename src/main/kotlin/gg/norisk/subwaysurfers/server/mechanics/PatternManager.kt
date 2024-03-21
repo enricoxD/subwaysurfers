@@ -1,163 +1,87 @@
 package gg.norisk.subwaysurfers.server.mechanics
 
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
-import gg.norisk.subwaysurfers.extensions.next
-import gg.norisk.subwaysurfers.network.s2c.PatternPacket
-import gg.norisk.subwaysurfers.network.s2c.patternPacketS2C
+import gg.norisk.subwaysurfers.network.c2s.trackListRequestPacketC2S
+import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import gg.norisk.subwaysurfers.subwaysurfers.lastPatternUpdatePos
+import gg.norisk.subwaysurfers.utils.HashUtils
+import gg.norisk.subwaysurfers.worldgen.pattern.RailPattern
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.entity.Entity
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import java.io.File
+import java.util.*
 import kotlin.math.absoluteValue
 
-object PatternManager : ServerTickEvents.EndWorldTick {
+object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, ServerEntityEvents.Unload {
     val NEW_PATTERN_DISTANCE = 20
+    val rails = mutableSetOf<RailPattern>()
+    val sides = mutableSetOf<Pair<TrackInfo, File>>()
+    val nbtFolder = if (FabricLoader.getInstance().isDevelopmentEnvironment) {
+        File(File("").absoluteFile.parentFile, "nbt")
+    } else {
+        File("config", "subwaysurfers/nbt")
+    }.apply {
+        mkdirs()
+    }
+
+    //TODO das clearen wenn spieler leaved etc vergess ich eh lol
+    val playerPatterns = mutableMapOf<UUID, List<RailPattern>>()
 
     fun init() {
         ServerTickEvents.END_WORLD_TICK.register(this)
+        ServerEntityEvents.ENTITY_LOAD.register(this)
+        ServerEntityEvents.ENTITY_UNLOAD.register(this)
+        loadAllSides()
+        loadAllTracks()
+        trackListRequestPacketC2S.receiveOnServer { packet, context -> handleTrackListRequest(packet, context.player) }
     }
 
-    var currentPattern: Pattern = Pattern.FIRST
+    private fun handleTrackListRequest(tracks: List<TrackInfo>, player: ServerPlayerEntity) {
+        val railList =
+            rails.filter { (it.railName in tracks.map { requestedTrack -> requestedTrack.name }) && (it.hash in tracks.map { requestedTrack -> requestedTrack.hash }) }
+                .map { TrackHolder(it.file, it.railName, it.hash) }.toMutableList()
+        val sideList =
+            sides.filter { (it.first.name in tracks.map { requestedTrack -> requestedTrack.name }) && (it.first.hash in tracks.map { requestedTrack -> requestedTrack.hash }) }
+                .map { TrackHolder(it.second, it.first.name, it.first.hash) }
 
-    enum class Pattern(val left: List<String>, val middle: List<String>, val right: List<String>) {
-        FIRST(
-            listOf(
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-            ), listOf(
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1"
-            ), listOf(
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-                "subway_house_1",
-            )
-        ),
-        SECOND(
-            listOf(
-                "subway_house_2",
-                "subway_house_2",
-                "subway_house_2",
-                "subway_house_2",
-                "subway_house_2",
-            ), listOf(
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1"
-            ), listOf(
-                "subway_house_2",
-                "subway_house_2",
-                "subway_house_2",
-                "subway_house_2",
-                "subway_house_2",
-            )
-        ),
-        THIRD(
-            listOf(
-                "subway_house_3",
-                "subway_house_3",
-                "subway_house_3",
-                "subway_house_3",
-                "subway_house_3",
-            ), listOf(
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1"
-            ), listOf(
-                "subway_house_3",
-                "subway_house_3",
-                "subway_house_3",
-                "subway_house_3",
-                "subway_house_3",
-            )
-        ),
-        FOURTH(
-            listOf(
-                "subway_house_1",
-                "subway_house_2",
-                "subway_house_3",
-                "subway_house_4",
-                "subway_house_5",
-                "subway_house_6",
-                "subway_house_7",
-                "subway_house_8",
-                "subway_house_9",
-                "subway_house_10",
-                "subway_house_11",
-            ), listOf(
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1",
-                "subway_rail_1"
-            ), listOf(
-                "subway_house_1",
-                "subway_house_2",
-                "subway_house_3",
-                "subway_house_4",
-                "subway_house_5",
-                "subway_house_6",
-                "subway_house_7",
-                "subway_house_8",
-                "subway_house_9",
-                "subway_house_10",
-                "subway_house_11",
-            )
-        )
+        railList.addAll(sideList)
+        sendTracksToPlayer(player, railList)
+    }
+
+    private fun sendTracksToPlayer(playerEntity: ServerPlayerEntity, tracks: List<TrackHolder>) {
+        for (track in tracks) {
+            templatePacketS2C.send(TemplatePacket(track.file.readBytes(), track.name), playerEntity)
+        }
+    }
+
+    private fun loadAllSides() {
+        val sidesFolder = File(nbtFolder, "sides")
+        for (file in sidesFolder.walkTopDown()) {
+            if (file.extension == "nbt") {
+                val sideInfo = TrackInfo(file.nameWithoutExtension, HashUtils.md5(file.readBytes()))
+                logger.info("Added: $sideInfo")
+                sides.add(Pair(sideInfo, file))
+            }
+        }
+    }
+
+    private fun loadAllTracks() {
+        val railFolder = File(nbtFolder, "rails")
+        for (file in railFolder.walkTopDown()) {
+            if (file.extension == "nbt") {
+                val railPattern = RailPattern(
+                    file.path.substringAfterLast("rails").replace("\\", "/") //TODO das könnte breaken?
+                        .substring(1).replace(".nbt", ""), file, HashUtils.md5(file.readBytes())
+                )
+                logger.info("Added: $railPattern")
+                rails.add(railPattern)
+            }
+        }
     }
 
     override fun onEndTick(world: ServerWorld) {
@@ -165,16 +89,61 @@ object PatternManager : ServerTickEvents.EndWorldTick {
             val pos = playerEntity.z.absoluteValue.toInt()
             if (pos.mod(NEW_PATTERN_DISTANCE) == 0 && pos != playerEntity.lastPatternUpdatePos) {
                 playerEntity.lastPatternUpdatePos = pos
-                logger.info("Sending new Pattern to ${playerEntity.name}")
+
+                val lastPatterns = playerPatterns[playerEntity.uuid] ?: getRailPattern()
+                val nextPattern = getRailPattern(firstTrack = lastPatterns.last())
+                playerPatterns[playerEntity.uuid] = nextPattern
+
                 patternPacketS2C.send(
                     PatternPacket(
-                        currentPattern.left,
-                        currentPattern.middle,
-                        currentPattern.right
+                        getEnvironmentPattern(), nextPattern.map { it.railName }, getEnvironmentPattern()
                     ), playerEntity
                 )
-                currentPattern = currentPattern.next()
             }
         }
+    }
+
+    fun getEnvironmentPattern(length: Int = 20): List<String> {
+        return buildList {
+            repeat(length) {
+                add(sides.random().first.name)
+            }
+        }
+    }
+
+    fun getRailPattern(
+        firstTrack: RailPattern = rails.filter { it.startColors.size == 3 || it.startColors.contains("green") }
+            .random(), length: Int = 10
+    ): List<RailPattern> {
+        return buildList {
+            var lastTrack = firstTrack
+            repeat(length) {
+                val nextRailPattern = getFittingRailPattern(lastTrack)
+                add(nextRailPattern)
+                lastTrack = nextRailPattern
+            }
+        }
+    }
+
+    fun getRailsWithAllColors(): List<RailPattern> {
+        return rails.filter { it.startColors.size == 3 }
+    }
+
+    fun getFittingRailPattern(railPattern: RailPattern): RailPattern {
+        val fittingRails = rails.filter { rail -> rail.startColors.any { it in railPattern.endColors } }
+        return fittingRails.random()
+    }
+
+    override fun onLoad(entity: Entity, world: ServerWorld) {
+        val player = entity as? ServerPlayerEntity ?: return
+        val railList = rails.map { TrackInfo(it.railName, it.hash) }.toMutableList()
+        val sideList = sides.map { it.first }
+        railList.addAll(sideList)
+        trackListPacketS2C.send(railList, player)
+    }
+
+    override fun onUnload(entity: Entity, world: ServerWorld) {
+        val player = entity as? ServerPlayerEntity ?: return
+        playerPatterns.remove(player.uuid)
     }
 }

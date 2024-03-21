@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 public abstract class MouseMixin {
     @ModifyArgs(method = "updateMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;changeLookDirection(DD)V"))
     private void subwaySurferStaticView(Args args) {
-        if (ClientSettings.INSTANCE.isEnabled()) {
+        if (ClientSettings.INSTANCE.useSubwayCamera()) {
             args.set(0, 0D);
             args.set(1, 0D);
         }

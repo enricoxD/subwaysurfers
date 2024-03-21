@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class GameRendererMixin {
     @Inject(method = "getFov", at = @At("HEAD"), cancellable = true)
     public void getFov(Camera camera, float f, boolean bl, CallbackInfoReturnable<Double> cir) {
-        var settings = ClientSettings.INSTANCE;
-        if (settings.isEnabled()) cir.setReturnValue(settings.getSettings().getFov());
+        if (ClientSettings.INSTANCE.useSubwayCamera())
+            cir.setReturnValue(ClientSettings.INSTANCE.getCameraSettings().getFov());
     }
 }

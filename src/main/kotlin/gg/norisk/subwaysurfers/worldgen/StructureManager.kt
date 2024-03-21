@@ -7,11 +7,13 @@ import gg.norisk.subwaysurfers.extensions.toStack
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_WORLD_TICK
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndWorldTick
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.datafixer.DataFixTypes
 import net.minecraft.datafixer.Schemas
+import net.minecraft.entity.Entity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.nbt.NbtIo
@@ -23,6 +25,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3i
 import net.silkmc.silk.commands.clientCommand
 import net.silkmc.silk.commands.player
+import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
@@ -73,7 +76,10 @@ object StructureManager : EndWorldTick {
         player: ClientPlayerEntity,
         pos: BlockPos,
         template: StructureTemplate,
-        placementData: StructurePlacementData = StructurePlacementData()
+        placementData: StructurePlacementData = StructurePlacementData(),
+        ignoreAir: Boolean = false,
+        blocks: MutableMap<BlockPos, BlockState>? = null,
+        entities: MutableSet<Entity>? = null,
     ) {
         val world = player.world as ClientWorld
 
@@ -83,7 +89,10 @@ object StructureManager : EndWorldTick {
             pos.add(Vec3i(0, 1, 0)),
             placementData,
             world.random,
-            2
+            2,
+            ignoreAir,
+            blocks,
+            entities
         )
     }
 
@@ -104,7 +113,8 @@ object StructureManager : EndWorldTick {
         var nbtCompound: NbtCompound? = null
 
         runCatching {
-            javaClass.getResourceAsStream("/structures/$name.nbt")!!
+            File(ClientSettings.baseFolder,"$name.nbt").inputStream()
+            //javaClass.getResourceAsStream("/structures/$name.nbt")!!
         }.onSuccess {
             nbtCompound = NbtIo.readCompressed(it, NbtSizeTracker.ofUnlimitedBytes())
         }.onFailure {

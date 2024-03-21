@@ -7,6 +7,7 @@ import gg.norisk.subwaysurfers.network.c2s.nbtChangePacketC2S
 import gg.norisk.subwaysurfers.network.c2s.restartPacketC2S
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.StartCommand
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.silkmc.silk.core.text.literal
@@ -19,6 +20,7 @@ object ScreenListener {
         }
         homePacketC2S.receiveOnServer { packet, context ->
             val player = context.player
+            player.isSubwaySurfers = false
             player.teleport(
                 player.serverWorld,
                 ServerConfig.config.spawn.x,

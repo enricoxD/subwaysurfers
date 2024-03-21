@@ -4,7 +4,8 @@ import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.hud.GameOverScreen
 import gg.norisk.subwaysurfers.client.hud.InGameHud
 import gg.norisk.subwaysurfers.client.input.KeyboardInput
-import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGamePreStartLifeCycle
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle
 import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
@@ -13,13 +14,13 @@ import gg.norisk.subwaysurfers.client.renderer.ShaderManager
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.StartCommand
+import gg.norisk.subwaysurfers.server.listener.BasicListener
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
 import gg.norisk.subwaysurfers.server.listener.ScreenListener
 import gg.norisk.subwaysurfers.server.mechanics.ItemEffectManager
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
-import gg.norisk.subwaysurfers.worldgen.RailWorldManager
 import gg.norisk.subwaysurfers.worldgen.StructureManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
@@ -42,7 +43,6 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         SoundRegistry.init()
         BlockRegistry.init()
         ItemRegistry.init()
-        RailWorldManager.init()
         NetworkRegistry.init()
         serverDevCommands()
 
@@ -53,6 +53,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
             PunishManager.init()
             PatternManager.init()
             ServerConfig.init()
+            BasicListener.init()
             ScreenListener.init()
             MovementInputListener.init()
         }
@@ -70,7 +71,8 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         GameOverListener.init()
         ShaderManager.init()
         StructureManager.initClient()
-        ClientGameStartLifeCycle.init()
+        ClientGamePreStartLifeCycle.init()
+        ClientGameRunningLifeCycle.init()
         devCommands()
     }
 

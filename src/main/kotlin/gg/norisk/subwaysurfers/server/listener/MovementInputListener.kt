@@ -7,12 +7,16 @@ import gg.norisk.subwaysurfers.network.s2c.playAnimationS2C
 import gg.norisk.subwaysurfers.registry.SoundRegistry
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager.punishHit
 import gg.norisk.subwaysurfers.subwaysurfers.*
+import gg.norisk.subwaysurfers.subwaysurfers.dashStrength
+import gg.norisk.subwaysurfers.subwaysurfers.isSliding
+import gg.norisk.subwaysurfers.subwaysurfers.jumpStrength
+import gg.norisk.subwaysurfers.subwaysurfers.rail
 import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.sound.SoundCategory
 import net.minecraft.util.math.Vec3d
 import net.silkmc.silk.core.entity.modifyVelocity
+import net.silkmc.silk.core.kotlin.ticks
 import net.silkmc.silk.core.task.mcCoroutineTask
-import kotlin.time.Duration.Companion.seconds
 
 object MovementInputListener {
     fun init() {
@@ -22,13 +26,22 @@ object MovementInputListener {
             if (packet == MovementType.SLIDE) {
                 if (player.hasJetpack) return@receiveOnServer
                 playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))
-
-                // add downward velocity to player
-                player.modifyVelocity(Vec3d(0.0, -1.0, 0.0))
-
-                player.surfer.isSliding = true
-                mcCoroutineTask(delay = 3.seconds) {
-                    player.surfer.isSliding = false
+                if (!player.isSliding) {
+                    player.isSliding = true
+                    playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))
+                    // add downward velocity to player
+                    player.modifyVelocity(Vec3d(0.0, -1.0, 0.0))
+                    (player.world.playSoundFromEntity(
+                        null,
+                        player,
+                        SoundRegistry.WHOOSH,
+                        SoundCategory.PLAYERS,
+                        0.4f,
+                        0.8f
+                    ))
+                    mcCoroutineTask(delay = 20.ticks) {
+                        player.isSliding = false
+                    }
                 }
             } else if (packet == MovementType.JUMP) {
                 playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))

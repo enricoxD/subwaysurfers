@@ -10,7 +10,7 @@ val mcVersion = "1.20.4"
 val silkVersion = "1.10.3"
 
 group = "gg.norisk"
-version = "${mcVersion}-1.0.5"
+version = "${mcVersion}-1.0.7"
 
 repositories {
     mavenCentral()
@@ -44,7 +44,7 @@ dependencies {
     modImplementation("software.bernie.geckolib:geckolib-fabric-$mcVersion:4.3.1")
     modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:1.0.2-rc1+1.20")
     modImplementation("io.wispforest:owo-lib:0.12.5+1.20.3")
-    modImplementation("maven.modrinth:iris:1.6.17+1.20.4")
+    modCompileOnly("maven.modrinth:iris:1.6.17+1.20.4")
 }
 
 loom {
