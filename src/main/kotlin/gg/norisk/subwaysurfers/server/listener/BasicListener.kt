@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.server.listener
 
 import gg.norisk.subwaysurfers.server.ServerConfig
+import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
 import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayerEntity
@@ -14,6 +15,7 @@ object BasicListener : ServerEntityEvents.Load {
     override fun onLoad(entity: Entity, world: ServerWorld) {
         ServerConfig.config.spawn
         val player = entity as? ServerPlayerEntity ?: return
+        player.isSubwaySurfers = false
         player.teleport(
             world.server.overworld, ServerConfig.config.spawn.x,
             ServerConfig.config.spawn.y,
