@@ -77,6 +77,8 @@ object StartCommand {
         yawArg?.apply { cameraSettings.yaw = this }
         pitchArg?.apply { cameraSettings.pitch = this }
 
+        player.isSubwaySurfers = false
+
         if (isEnabled) {
             player.serverWorld.setBlockState(
                 ServerConfig.config.startPos.toBlockPos().down(),
