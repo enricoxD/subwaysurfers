@@ -8,9 +8,7 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,19 +27,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow
     public abstract float getMovementSpeed();
 
-    @Shadow
-    public abstract void sendMessage(Text text, boolean bl);
-
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
-    }
-
-    @Override
-    public void onTrackedDataSet(TrackedData<?> data) {
-        super.onTrackedDataSet(data);
-        if (SubwaySurferKt.getSlidingTracker().equals(data)) {
-            calculateDimensions();
-        }
     }
 
     @Override

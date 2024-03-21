@@ -3,13 +3,18 @@ package gg.norisk.subwaysurfers.server.listener
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents
 import net.minecraft.entity.Entity
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.world.Difficulty
+import net.minecraft.world.GameRules
 
-object BasicListener : ServerEntityEvents.Load {
+object BasicListener : ServerEntityEvents.Load, ServerWorldEvents.Load {
     fun init() {
         ServerEntityEvents.ENTITY_LOAD.register(this)
+        ServerWorldEvents.LOAD.register(this)
     }
 
     override fun onLoad(entity: Entity, world: ServerWorld) {
@@ -23,5 +28,12 @@ object BasicListener : ServerEntityEvents.Load {
             ServerConfig.config.spawn.yaw,
             ServerConfig.config.spawn.pitch
         )
+    }
+
+    override fun onWorldLoad(server: MinecraftServer, world: ServerWorld) {
+        server.setDifficulty(Difficulty.PEACEFUL, true)
+        server.overworld.timeOfDay = 6000
+        server.gameRules.get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server)
+        server.gameRules.get(GameRules.DO_WEATHER_CYCLE).set(false, server)
     }
 }
