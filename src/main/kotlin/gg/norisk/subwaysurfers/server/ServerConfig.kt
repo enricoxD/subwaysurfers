@@ -24,7 +24,7 @@ object ServerConfig {
         var surferMaxSpeed: Double = 0.4,
         var surferAcceleration: Double = 0.005,
         var jumpStrength: Double = 1.3,
-        var slidingTicks: Int = 30,
+        var slidingTicks: Int = 25,
     )
 
     var configFolder = File("config", "subwaysurfers").apply { mkdirs() }
@@ -60,6 +60,11 @@ object ServerConfig {
                     config.spawn = PositionDto(
                         player.x, player.y, player.z, player.yaw, player.pitch
                     )
+                    save()
+                }
+            }
+            literal("save") {
+                runs {
                     save()
                 }
             }
