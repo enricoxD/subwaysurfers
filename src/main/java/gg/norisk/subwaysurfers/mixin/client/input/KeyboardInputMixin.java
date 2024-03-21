@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.mixin.client.input;
 
 import gg.norisk.subwaysurfers.client.ClientSettings;
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGamePreStartLifeCycle;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
@@ -15,6 +16,13 @@ public abstract class KeyboardInputMixin extends Input {
     private void subwaySurfersMoveInjection(boolean slowDown, float f, CallbackInfo ci) {
         if (ClientSettings.INSTANCE.isEnabled()) {
             movementForward = 1.0F;
+            movementSideways = 0.0f;
+            pressingLeft = false;
+            pressingRight = false;
+            jumping = false;
+            sneaking = false;
+        } else if (ClientGamePreStartLifeCycle.INSTANCE.isPreStarting()) {
+            movementForward = 0.0F;
             movementSideways = 0.0f;
             pressingLeft = false;
             pressingRight = false;

@@ -4,7 +4,8 @@ import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.hud.GameOverScreen
 import gg.norisk.subwaysurfers.client.hud.InGameHud
 import gg.norisk.subwaysurfers.client.input.KeyboardInput
-import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGamePreStartLifeCycle
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle
 import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
@@ -66,7 +67,8 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         GameOverListener.init()
         ShaderManager.init()
         StructureManager.initClient()
-        ClientGameStartLifeCycle.init()
+        ClientGamePreStartLifeCycle.init()
+        ClientGameRunningLifeCycle.init()
         devCommands()
     }
 

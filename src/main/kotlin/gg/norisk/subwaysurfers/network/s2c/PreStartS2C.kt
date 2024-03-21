@@ -6,10 +6,11 @@ import kotlinx.serialization.Serializable
 import net.silkmc.silk.network.packet.s2cPacket
 
 @Serializable
-data class VisualClientSettings(
+data class PreStartS2C(
     var startPos: PositionDto = PositionDto(8.5, -60.0, 8.5, 0f, 0f),
-    var isEnabled: Boolean = false,
-    val cameraSettings: CameraSettings = CameraSettings()
+    val initialPattern: PatternPacket,
+    val howLong: Long,
+    val cameraSettings: CameraSettings
 )
 
-val visualClientSettingsS2C = s2cPacket<VisualClientSettings>("visualclientsettings".toId())
+val preStartS2C = s2cPacket<PreStartS2C>("pre-start".toId())

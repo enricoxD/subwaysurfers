@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.worldgen
 
-import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle.fakeBlocks
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle.fakeBlocks
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
@@ -105,7 +106,7 @@ open class PatternGenerator(
 
         for (blockPos in toRemove) {
             world.setBlockState(blockPos, blocksToPlace[blockPos])
-            fakeBlocks.add(BlockInfo(Blocks.AIR.defaultState, blockPos))
+            ClientGameRunningLifeCycle.fakeBlocks.add(BlockInfo(Blocks.AIR.defaultState, blockPos))
             blocksToPlace.remove(blockPos)
         }
     }

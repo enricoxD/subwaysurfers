@@ -2,7 +2,7 @@ package gg.norisk.subwaysurfers.mixin.client.structure;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import gg.norisk.subwaysurfers.client.lifecycle.ClientGameStartLifeCycle;
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle;
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate;
 import gg.norisk.subwaysurfers.entity.OriginMarker;
 import gg.norisk.subwaysurfers.entity.UUIDMarker;
@@ -217,7 +217,7 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                         if (blocks != null) {
                             blocks.put(blockPos3, blockState);
                         } else if (world.setBlockState(blockPos3, blockState, i)) {
-                            ClientGameStartLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos3));
+                            ClientGameRunningLifeCycle.INSTANCE.getFakeBlocks().add(new BlockInfo(Blocks.AIR.getDefaultState(), blockPos3));
                             j = Math.min(j, blockPos3.getX());
                             k = Math.min(k, blockPos3.getY());
                             l = Math.min(l, blockPos3.getZ());

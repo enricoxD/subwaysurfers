@@ -12,6 +12,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.silkmc.silk.commands.command
+import net.silkmc.silk.core.kotlin.ticks
+import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literal
 
 object StartCommand {
@@ -77,19 +79,11 @@ object StartCommand {
     ) {
         val settings = VisualClientSettings()
         isEnabled.apply { settings.isEnabled = this }
-        cameraDistanceArg?.apply { settings.desiredCameraDistance = this }
-        yawArg?.apply { settings.yaw = this }
-        pitchArg?.apply { settings.pitch = this }
+        cameraDistanceArg?.apply { settings.cameraSettings.desiredCameraDistance = this }
+        yawArg?.apply { settings.cameraSettings.yaw = this }
+        pitchArg?.apply { settings.cameraSettings.pitch = this }
 
         if (isEnabled) {
-            val pattern = PatternManager.playerPatterns.computeIfAbsent(player.uuid) { PatternManager.getRailPattern() }
-
-            settings.patternPacket = PatternPacket(
-                PatternManager.getEnvironmentPattern(),
-                pattern.map { it.path },
-                PatternManager.getEnvironmentPattern()
-            )
-
             player.teleport(
                 player.serverWorld,
                 ServerConfig.config.startPos.x,
@@ -98,19 +92,43 @@ object StartCommand {
                 0f,
                 0f
             )
-            player.isSubwaySurfers = true
-            player.coins = 0
-            player.punishTicks = 0
-            player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue =
-                SpeedManager.SURFER_BASE_SPEED
+
+            val startTime = 3L
+            val railPattern =
+                PatternManager.playerPatterns.computeIfAbsent(player.uuid) { PatternManager.getRailPattern() }
+            val patternPacket = PatternPacket(
+                PatternManager.getEnvironmentPattern(),
+                railPattern.map { it.path },
+                PatternManager.getEnvironmentPattern()
+            )
+            preStartS2C.send(PreStartS2C(settings.startPos, patternPacket, startTime, settings.cameraSettings), player)
+
+            startTimer(startTime, player, settings)
         } else {
             player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
             player.isSubwaySurfers = false
+            visualClientSettingsS2C.send(settings, player)
         }
+    }
 
-        visualClientSettingsS2C.send(settings, player)
+    private fun startTimer(howLong: Long, player: ServerPlayerEntity, settings: VisualClientSettings) {
+        mcCoroutineTask(howOften = howLong, period = 20.ticks) { task ->
+            if (task.round == howLong) {
+                mcCoroutineTask(delay = 20.ticks) {
+                    start(player, settings)
+                }
+            }
+        }
+    }
 
+    private fun start(player: ServerPlayerEntity, settings: VisualClientSettings) {
+        player.isSubwaySurfers = true
+        player.coins = 0
+        player.punishTicks = 0
         player.rail = 1
+        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue =
+            SpeedManager.SURFER_BASE_SPEED
+        visualClientSettingsS2C.send(settings, player)
     }
 
     private fun CommandContext<ServerCommandSource>.extracted(
