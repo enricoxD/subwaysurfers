@@ -11,10 +11,7 @@ import net.silkmc.silk.core.entity.directionVector
 import net.silkmc.silk.core.entity.modifyVelocity
 import org.joml.Vector3f
 
-interface SubwaySurfer {
-    var isSliding: Boolean
-    var coins: Int
-}
+
 
 val isEnabled: Boolean
     get() {
@@ -22,6 +19,15 @@ val isEnabled: Boolean
     }
 
 //TODO leftPattern, rightPattern, trackPattern
+
+var PlayerEntity.isSliding: Boolean
+    get() {
+        return this.dataTracker.get(slidingTracker)
+    }
+    set(value) {
+        this.dataTracker.set(slidingTracker, value)
+    }
+
 
 var PlayerEntity.punishTicks: Int
     get() {
@@ -172,11 +178,11 @@ val multiplierTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val punishTicksTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
+val slidingTracker =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val subwaySurfersTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val debugModeTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val magnetTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
-
-val PlayerEntity.surfer get() = this as SubwaySurfer
