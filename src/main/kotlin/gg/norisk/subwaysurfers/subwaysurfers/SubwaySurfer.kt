@@ -1,7 +1,6 @@
 package gg.norisk.subwaysurfers.subwaysurfers
 
 import gg.norisk.subwaysurfers.entity.CoinEntity
-import gg.norisk.subwaysurfers.registry.NetworkRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
@@ -9,8 +8,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.MathHelper
 import net.silkmc.silk.core.entity.directionVector
 import net.silkmc.silk.core.entity.modifyVelocity
-import org.joml.Vector3f
-
 
 
 val isEnabled: Boolean
@@ -43,14 +40,6 @@ var PlayerEntity.gravity: Double
     }
     set(value) {
         this.dataTracker.set(gravityTracker, value.toFloat())
-    }
-
-var PlayerEntity.jumpStrength: Double
-    get() {
-        return this.dataTracker.get(jumpStrengthTracker).toDouble()
-    }
-    set(value) {
-        this.dataTracker.set(jumpStrengthTracker, value.toFloat())
     }
 
 var PlayerEntity.dashStrength: Double
@@ -163,8 +152,6 @@ val coinDataTracker =
 val dashStrengthTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.FLOAT)
 val gravityTracker =
-    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.FLOAT)
-val jumpStrengthTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.FLOAT)
 val railDataTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)

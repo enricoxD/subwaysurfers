@@ -106,7 +106,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         this.dataTracker.startTracking(SubwaySurferKt.getGravityTracker(), 0.3f);
         this.dataTracker.startTracking(SubwaySurferKt.getDashStrengthTracker(), 2.0f);
         this.dataTracker.startTracking(SubwaySurferKt.getMultiplierTracker(), 1);
-        this.dataTracker.startTracking(SubwaySurferKt.getJumpStrengthTracker(), 1.8f);
         this.dataTracker.startTracking(SubwaySurferKt.getRailDataTracker(), 1);
         this.dataTracker.startTracking(SubwaySurferKt.getLastPatternUpdatePosTracker(), 0);
         this.dataTracker.startTracking(SubwaySurferKt.getLastBlockCollisionPosTracker(), 0);

@@ -23,6 +23,7 @@ object ServerConfig {
         var surferBaseSpeed: Double = 0.15,
         var surferMaxSpeed: Double = 0.4,
         var surferAcceleration: Double = 0.005,
+        var jumpStrength: Double = 1.3
     )
 
     var configFolder = File("config", "subwaysurfers").apply { mkdirs() }

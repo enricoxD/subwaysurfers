@@ -5,10 +5,10 @@ import gg.norisk.subwaysurfers.network.c2s.movementTypePacket
 import gg.norisk.subwaysurfers.network.s2c.AnimationPacket
 import gg.norisk.subwaysurfers.network.s2c.playAnimationS2C
 import gg.norisk.subwaysurfers.registry.SoundRegistry
+import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager.punishHit
 import gg.norisk.subwaysurfers.subwaysurfers.dashStrength
 import gg.norisk.subwaysurfers.subwaysurfers.isSliding
-import gg.norisk.subwaysurfers.subwaysurfers.jumpStrength
 import gg.norisk.subwaysurfers.subwaysurfers.rail
 import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.sound.SoundCategory
@@ -50,8 +50,9 @@ object MovementInputListener {
                     0.4f,
                     0.8f
                 ))
+                val jumpStrength = ServerConfig.config.jumpStrength
                 player.modifyVelocity(
-                    Vec3d(0.0, player.jumpStrength, 0.0)
+                    Vec3d(0.0, jumpStrength, 0.0)
                 )
             } else if (player.rail == 0 && packet == MovementType.LEFT) {
                 player.punishHit()
