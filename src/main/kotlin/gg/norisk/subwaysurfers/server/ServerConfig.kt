@@ -18,8 +18,11 @@ object ServerConfig {
 
     @Serializable
     data class Config(
-        var spawn: PositionDto = PositionDto(0.5, -60.0, 0.5, 0f, 0f),
-        var startPos: PositionDto = PositionDto(8.5, -60.0, 8.5, 0f, 0f)
+        var spawn: PositionDto = PositionDto(8.5, -60.0, 8.5, 0f, 0f),
+        var startPos: PositionDto = PositionDto(8.5, -60.0, 34.5, 0f, 0f),
+        var surferBaseSpeed: Double = 0.15,
+        var surferMaxSpeed: Double = 0.4,
+        var surferAcceleration: Double = 0.005,
     )
 
     var configFile = File("config", "subwaysurfer-config.json")

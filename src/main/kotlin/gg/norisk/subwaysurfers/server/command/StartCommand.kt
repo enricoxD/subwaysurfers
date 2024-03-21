@@ -6,6 +6,7 @@ import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
 import gg.norisk.subwaysurfers.subwaysurfers.*
+import net.minecraft.block.Blocks
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
@@ -13,8 +14,10 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.kotlin.ticks
+import net.silkmc.silk.core.math.vector.minus
 import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literal
+import org.apache.logging.log4j.core.jmx.Server
 
 object StartCommand {
     fun init() {
@@ -77,13 +80,18 @@ object StartCommand {
         yawArg: Float? = null,
         pitchArg: Float? = null
     ) {
-        val settings = VisualClientSettings()
-        isEnabled.apply { settings.isEnabled = this }
-        cameraDistanceArg?.apply { settings.cameraSettings.desiredCameraDistance = this }
-        yawArg?.apply { settings.cameraSettings.yaw = this }
-        pitchArg?.apply { settings.cameraSettings.pitch = this }
+        val startStopPacket = StartStopPacket()
+        val cameraSettings = CameraSettings()
+        isEnabled.apply { startStopPacket.isEnabled = this }
+        cameraDistanceArg?.apply { cameraSettings.desiredCameraDistance = this }
+        yawArg?.apply { cameraSettings.yaw = this }
+        pitchArg?.apply { cameraSettings.pitch = this }
 
         if (isEnabled) {
+            player.serverWorld.setBlockState(
+                ServerConfig.config.startPos.toBlockPos().down(),
+                Blocks.BEDROCK.defaultState
+            )
             player.teleport(
                 player.serverWorld,
                 ServerConfig.config.startPos.x,
@@ -101,17 +109,24 @@ object StartCommand {
                 railPattern.map { it.path },
                 PatternManager.getEnvironmentPattern()
             )
-            preStartS2C.send(PreStartS2C(settings.startPos, patternPacket, startTime, settings.cameraSettings), player)
+            preStartS2C.send(
+                PreStartS2C(
+                    ServerConfig.config.startPos,
+                    patternPacket,
+                    startTime,
+                    cameraSettings
+                ), player
+            )
 
-            startTimer(startTime, player, settings)
+            startTimer(startTime, player, startStopPacket)
         } else {
             player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
             player.isSubwaySurfers = false
-            visualClientSettingsS2C.send(settings, player)
+            startStopPacketS2C.send(startStopPacket, player)
         }
     }
 
-    private fun startTimer(howLong: Long, player: ServerPlayerEntity, settings: VisualClientSettings) {
+    private fun startTimer(howLong: Long, player: ServerPlayerEntity, settings: StartStopPacket) {
         mcCoroutineTask(howOften = howLong, period = 20.ticks) { task ->
             if (task.round == howLong) {
                 mcCoroutineTask(delay = 20.ticks) {
@@ -121,14 +136,14 @@ object StartCommand {
         }
     }
 
-    private fun start(player: ServerPlayerEntity, settings: VisualClientSettings) {
+    private fun start(player: ServerPlayerEntity, settings: StartStopPacket) {
         player.isSubwaySurfers = true
         player.coins = 0
         player.punishTicks = 0
         player.rail = 1
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue =
-            SpeedManager.SURFER_BASE_SPEED
-        visualClientSettingsS2C.send(settings, player)
+            ServerConfig.config.surferBaseSpeed
+        startStopPacketS2C.send(settings, player)
     }
 
     private fun CommandContext<ServerCommandSource>.extracted(

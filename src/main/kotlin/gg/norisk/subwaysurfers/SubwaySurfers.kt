@@ -13,6 +13,7 @@ import gg.norisk.subwaysurfers.client.renderer.ShaderManager
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.StartCommand
+import gg.norisk.subwaysurfers.server.listener.BasicListener
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
 import gg.norisk.subwaysurfers.server.listener.ScreenListener
 import gg.norisk.subwaysurfers.server.mechanics.ItemEffectManager
@@ -51,6 +52,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
             PunishManager.init()
             PatternManager.init()
             ServerConfig.init()
+            BasicListener.init()
             ScreenListener.init()
             MovementInputListener.init()
         }
