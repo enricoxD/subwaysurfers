@@ -57,7 +57,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             SubwaySurferKt.handlePunishTicks((PlayerEntity) (Object) this);
         } else {
             if (horizontalCollision) {
-                PlayerEvents.INSTANCE.getHorionztalCollisionEvent().invoke(new PlayerEvents.PlayerHorionztalCollisionEvent((PlayerEntity) (Object) this));
+                //PlayerEvents.INSTANCE.getHorionztalCollisionEvent().invoke(new PlayerEvents.PlayerHorionztalCollisionEvent((PlayerEntity) (Object) this));
             }
         }
     }

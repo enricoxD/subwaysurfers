@@ -1,5 +1,6 @@
 package gg.norisk.subwaysurfers.entity
 
+import gg.norisk.subwaysurfers.event.events.PlayerEvents
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.minecraft.block.BlockState
 import net.minecraft.entity.Entity
@@ -9,6 +10,7 @@ import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.passive.AnimalEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
@@ -72,6 +74,13 @@ class TrainEntity(type: EntityType<out AnimalEntity>, level: World) : DriveableE
             return false
         }
         return super.collidesWith(entity)
+    }
+
+    override fun onPlayerCollision(playerEntity: PlayerEntity) {
+        super.onPlayerCollision(playerEntity)
+        if (world.isClient) {
+            PlayerEvents.horionztalCollisionEvent.invoke(PlayerEvents.PlayerHorionztalCollisionEvent(playerEntity))
+        }
     }
 
     override fun isLogicalSideForUpdatingMovement(): Boolean = true
