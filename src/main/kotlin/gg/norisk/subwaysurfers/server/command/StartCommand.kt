@@ -14,10 +14,8 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.kotlin.ticks
-import net.silkmc.silk.core.math.vector.minus
 import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literal
-import org.apache.logging.log4j.core.jmx.Server
 
 object StartCommand {
     fun init() {
@@ -106,7 +104,7 @@ object StartCommand {
                 PatternManager.playerPatterns.computeIfAbsent(player.uuid) { PatternManager.getRailPattern() }
             val patternPacket = PatternPacket(
                 PatternManager.getEnvironmentPattern(),
-                railPattern.map { it.path },
+                railPattern.map { it.railName },
                 PatternManager.getEnvironmentPattern()
             )
             preStartS2C.send(

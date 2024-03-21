@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.worldgen
 
 import com.google.common.cache.CacheBuilder
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
+import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate
 import gg.norisk.subwaysurfers.extensions.toStack
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_WORLD_TICK
@@ -25,6 +26,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3i
 import net.silkmc.silk.commands.clientCommand
 import net.silkmc.silk.commands.player
+import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
@@ -112,7 +114,8 @@ object StructureManager : EndWorldTick {
         var nbtCompound: NbtCompound? = null
 
         runCatching {
-            javaClass.getResourceAsStream("/structures/$name.nbt")!!
+            File(ClientSettings.baseFolder,"$name.nbt").inputStream()
+            //javaClass.getResourceAsStream("/structures/$name.nbt")!!
         }.onSuccess {
             nbtCompound = NbtIo.readCompressed(it, NbtSizeTracker.ofUnlimitedBytes())
         }.onFailure {

@@ -1,6 +1,8 @@
 package gg.norisk.subwaysurfers.worldgen.pattern
 
-data class RailPattern(val path: String) {
+import java.io.File
+
+data class RailPattern(val path: String, val file: File, val hash: String) {
     val startColors: List<String>
     val endColors: List<String>
     val railName: String
