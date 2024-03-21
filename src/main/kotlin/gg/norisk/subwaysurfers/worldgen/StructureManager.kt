@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.worldgen
 
 import com.google.common.cache.CacheBuilder
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
+import gg.norisk.subwaysurfers.client.ClientSettings
 import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate
 import gg.norisk.subwaysurfers.extensions.toStack
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_WORLD_TICK
