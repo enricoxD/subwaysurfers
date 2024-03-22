@@ -26,7 +26,6 @@ object MovementInputListener {
 
             if (packet == MovementType.SLIDE) {
                 if (player.hasPowerUp(Jetpack)) return@receiveOnServer
-                playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))
                 if (!player.isSliding) {
                     player.isSliding = true
                     playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))
