@@ -9,7 +9,6 @@ import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import kotlinx.serialization.ExperimentalSerializationApi
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
-import net.minecraft.item.ArmorItem
 import net.minecraft.item.Item
 import net.minecraft.server.network.ServerPlayerEntity
 import net.silkmc.silk.network.packet.c2sPacket
@@ -17,9 +16,9 @@ import net.silkmc.silk.network.packet.c2sPacket
 /**
  * A [Collectible] is an item (in minecraft terms an [Entity]) that can be picked up by the player; a power-up or a collectible.
  *
- * Example collectibles: [coin], key
+ * Example collectibles: [Coin], key
  *
- * Example [Powerup]s: [magnet], [jetpack], [hoverboard]
+ * Example [Powerup]s: [Magnet], [Jetpack], [Hoverboard]
  */
 open class Collectible(
     /** Unique identifier for linking resources like model, texture and animation. */
@@ -27,8 +26,6 @@ open class Collectible(
 ) {
     /** packet that is sent from a client to the server to indicate that the item was picked up */
     val pickupPacket = c2sPacket<BlockPosDto>("item_${id}_pickup".toId())
-
-    open val armorType: ArmorItem.Type? = null
 
     init {
         pickupPacket.receiveOnServer { _, context ->

@@ -21,7 +21,7 @@ import java.util.function.Supplier
 
 class PowerupItem(val powerup: Powerup, settings: Settings) : ArmorItem(
     ArmorMaterials.DIAMOND,
-    Type.CHESTPLATE,
+    Type.values().first { it.equipmentSlot == powerup.equipmentSlot },
     settings,
 ), GeoItem {
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
@@ -38,7 +38,7 @@ class PowerupItem(val powerup: Powerup, settings: Settings) : ArmorItem(
                 equipmentSlot: EquipmentSlot,
                 original: BipedEntityModel<LivingEntity>
             ): BipedEntityModel<LivingEntity> {
-                if (this.renderer == null) this.renderer = GeoArmorRenderer<JetpackItem>(DefaultedItemGeoModel("armor/${powerup.id}".toId()))
+                if (this.renderer == null) this.renderer = GeoArmorRenderer<PowerupItem>(DefaultedItemGeoModel("armor/${powerup.id}".toId()))
 
                 // This prepares our GeoArmorRenderer for the current render frame.
                 // These parameters may be null however, so we don't do anything further with them

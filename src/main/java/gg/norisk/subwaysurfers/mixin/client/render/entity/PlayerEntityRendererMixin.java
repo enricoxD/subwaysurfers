@@ -2,7 +2,6 @@ package gg.norisk.subwaysurfers.mixin.client.render.entity;
 
 import gg.norisk.subwaysurfers.SubwaySurfers;
 import gg.norisk.subwaysurfers.common.collectible.Hoverboard;
-import gg.norisk.subwaysurfers.common.collectible.PowerupKt;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;

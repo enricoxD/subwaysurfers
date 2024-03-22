@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ArmorItem
 import net.minecraft.server.network.ServerPlayerEntity
 import net.silkmc.silk.core.server.players
 import kotlin.time.Duration
@@ -23,7 +23,12 @@ open class Powerup(
      * How long the power up lasts, without modifiers (e.g. some kind of upgrade that makes all abilities last longer).
      */
     val baseDuration: Duration,
-    override val armorType: ArmorItem.Type
+    /**
+     * The slot in which the power-up should be equipped while active.
+     */
+    val equipmentSlot: EquipmentSlot,
+    /** can the power up be equipped as armor (needs armor model!) */
+    val isArmor: Boolean = true,
 ) : Collectible(id) {
     /** data tracker that is synced from server to client to indicate until when a power-up will last */
     val endTimestampTracker: TrackedData<Long> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.LONG)

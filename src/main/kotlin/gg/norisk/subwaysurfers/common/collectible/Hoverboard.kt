@@ -1,6 +1,6 @@
 package gg.norisk.subwaysurfers.common.collectible
 
-import net.minecraft.item.ArmorItem
+import net.minecraft.entity.EquipmentSlot
 import kotlin.time.Duration.Companion.seconds
 
-object Hoverboard : Powerup("hoverboard", 10.seconds, ArmorItem.Type.BOOTS /* ?? */)
+object Hoverboard : Powerup("hoverboard", 10.seconds, EquipmentSlot.FEET)

@@ -38,7 +38,7 @@ object Collectibles {
             FabricDefaultAttributeRegistry.register(collectible.entityType, EntityRegistry.createGenericEntityAttributes())
 
             // Item
-            val item = if (collectible is Powerup) {
+            val item = if (collectible is Powerup && collectible.isArmor) {
                 PowerupItem(collectible, Item.Settings())
             } else {
                 Item(Item.Settings())
@@ -70,5 +70,7 @@ object Collectibles {
     }
 }
 
-// add/remove items to this list to (un)register collectibles
+// add/remove items to/from this list to (un)register collectibles
 val collectibles = listOf(Coin, Jetpack, Hoverboard, Magnet, Boots)
+
+val powerups get() = collectibles.filterIsInstance<Powerup>()

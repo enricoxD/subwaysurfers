@@ -2,7 +2,7 @@ package gg.norisk.subwaysurfers.common.collectible
 
 import gg.norisk.subwaysurfers.common.entity.CollectibleEntity
 import net.minecraft.client.network.ClientPlayerEntity
-import net.minecraft.item.ArmorItem
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
@@ -10,7 +10,7 @@ import net.silkmc.silk.core.entity.directionVector
 import net.silkmc.silk.core.entity.modifyVelocity
 import kotlin.time.Duration.Companion.seconds
 
-object Magnet : Powerup("magnet", 10.seconds, ArmorItem.Type.CHESTPLATE /* todo hold magnet in hand */) {
+object Magnet : Powerup("magnet", 10.seconds, EquipmentSlot.OFFHAND, isArmor = false) {
     override fun onPickupServer(player: ServerPlayerEntity) {
         super.onPickupServer(player)
 

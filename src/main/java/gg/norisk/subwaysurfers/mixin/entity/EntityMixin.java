@@ -1,7 +1,6 @@
 package gg.norisk.subwaysurfers.mixin.entity;
 
 import gg.norisk.subwaysurfers.common.collectible.Jetpack;
-import gg.norisk.subwaysurfers.common.collectible.PowerupKt;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
