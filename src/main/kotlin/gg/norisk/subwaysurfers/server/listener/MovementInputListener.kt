@@ -65,9 +65,13 @@ object MovementInputListener {
             } else {
                 playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_dash"))
 
+                player.rail += (if (packet == MovementType.LEFT) -1 else 1)
+
                 val centerPos = player.pos
+                // use absolute x coordinate to reset x when player bugs a bit to the left or right of a rail
+                val newX = ServerConfig.config.startPos.x + (-player.rail + 1) * player.dashStrength
                 val newPos = Vec3d(
-                    centerPos.x + if (packet == MovementType.LEFT) player.dashStrength else -player.dashStrength,
+                    newX,
                     player.y,
                     centerPos.z,
                 )
@@ -90,7 +94,6 @@ object MovementInputListener {
                     player.yaw,
                     player.pitch
                 )
-                player.rail = player.rail + (if (packet == MovementType.LEFT) -1 else 1)
             }
         }
     }
