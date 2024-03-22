@@ -2,9 +2,6 @@
 
 package gg.norisk.subwaysurfers.subwaysurfers
 
-import gg.norisk.subwaysurfers.client.ClientSettings
-import gg.norisk.subwaysurfers.common.collectible.Jetpack
-import gg.norisk.subwaysurfers.common.collectible.hasPowerUp
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
@@ -126,16 +123,6 @@ fun PlayerEntity.handlePunishTicks() {
     if (punishTicks > 0) {
         --punishTicks
     }
-}
-
-fun PlayerEntity.getJetpackY(origY: Double): Double {
-    if (hasPowerUp(Jetpack)) {
-        val y = ClientSettings.startPos?.y ?: return origY
-        val targetY = y + 10.0
-        val currentY = MathHelper.lerp(0.1, origY, targetY)
-        return currentY
-    }
-    return origY
 }
 
 val coinDataTracker =

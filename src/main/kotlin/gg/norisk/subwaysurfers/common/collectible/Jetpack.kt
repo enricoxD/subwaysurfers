@@ -1,9 +1,13 @@
 package gg.norisk.subwaysurfers.common.collectible
 
+import gg.norisk.subwaysurfers.client.ClientSettings
+import net.fabricmc.fabric.mixin.container.ServerPlayerEntityAccessor
 import net.minecraft.client.network.ClientPlayerEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ArmorItem
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.math.MathHelper
 import kotlin.time.Duration.Companion.seconds
 
 object Jetpack  : Powerup("jetpack", 5.seconds, ArmorItem.Type.CHESTPLATE) {
@@ -22,7 +26,13 @@ object Jetpack  : Powerup("jetpack", 5.seconds, ArmorItem.Type.CHESTPLATE) {
         }
     }
 
-    override fun onTickServer(player: ServerPlayerEntity) {
-        super.onTickServer(player)
+    fun getY(player: PlayerEntity, origY: Double): Double {
+        if (player.hasPowerUp(this)) {
+            val y = ClientSettings.startPos?.y ?: return origY
+            val targetY = y + 15.0
+            val currentY = MathHelper.lerp(0.1, origY, targetY)
+            return currentY
+        }
+        return origY
     }
 }

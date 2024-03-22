@@ -40,9 +40,9 @@ public abstract class EntityMixin {
     @Inject(method = "setPosition(DDD)V", at = @At("HEAD"), cancellable = true)
     public void setPosition(double x, double y, double z, CallbackInfo ci) {
         if ((Object) this instanceof ClientPlayerEntity player) {
-            if (SubwaySurferKt.isSubwaySurfers(player)) {
+            if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
                 ci.cancel();
-                setPos(x, SubwaySurferKt.getJetpackY(player, y), z);
+                setPos(x, Jetpack.INSTANCE.getY(player, y), z);
                 setBoundingBox(calculateBoundingBox());
             }
         }
@@ -60,7 +60,7 @@ public abstract class EntityMixin {
     @Inject(method = "move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V", at = @At("HEAD"), cancellable = true)
     private void moveInjection(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
         if ((Object) this instanceof ClientPlayerEntity player) {
-            if (SubwaySurferKt.isSubwaySurfers(player) && PowerupKt.hasPowerUp(player, Jetpack.INSTANCE)) {
+            if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
                 ci.cancel();
                 setPosition(getX() + vec3d.x, getY() + vec3d.y, getZ() + vec3d.z);
             }

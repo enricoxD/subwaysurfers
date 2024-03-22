@@ -24,7 +24,7 @@ public class LivingEntityRendererMixin {
     public void injectedRender(LivingEntity livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         if (livingEntity instanceof ClientPlayerEntity player && SubwaySurferKt.isSubwaySurfers(player)) {
             float targetRotation;
-            if (PowerupKt.hasPowerUp(player, Jetpack.INSTANCE)) targetRotation = 80.0f;
+            if (Jetpack.INSTANCE.isActiveFor(player)) targetRotation = 80.0f;
             else targetRotation = 0.0f;
 
             // todo fps-independent lerp

@@ -84,7 +84,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Override
     public boolean hasNoGravity() {
-        var hasJetpack = PowerupKt.hasPowerUp((PlayerEntity) (Object) this, Jetpack.INSTANCE);
+        var hasJetpack = Jetpack.INSTANCE.isActiveFor((PlayerEntity) (Object) this);
         if (!SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) return super.hasNoGravity();
         else return hasJetpack;
     }

@@ -31,7 +31,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
 
     @Inject(method = "getPositionOffset(Lnet/minecraft/client/network/AbstractClientPlayerEntity;F)Lnet/minecraft/util/math/Vec3d;", at = @At("RETURN"), cancellable = true)
     private void injected(AbstractClientPlayerEntity abstractClientPlayerEntity, float f, CallbackInfoReturnable<Vec3d> cir) {
-        if (PowerupKt.hasPowerUp(abstractClientPlayerEntity, Hoverboard.INSTANCE)) {
+        if (Hoverboard.INSTANCE.isActiveFor(abstractClientPlayerEntity)) {
             Vec3d returnValue = cir.getReturnValue();
             cir.setReturnValue(returnValue.add(0.0, 0.5, 0.0));
         }
