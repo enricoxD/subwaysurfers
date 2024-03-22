@@ -1,4 +1,4 @@
-package gg.norisk.subwaysurfers.common.item
+package gg.norisk.subwaysurfers.common.collectible
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import net.minecraft.client.render.entity.model.BipedEntityModel

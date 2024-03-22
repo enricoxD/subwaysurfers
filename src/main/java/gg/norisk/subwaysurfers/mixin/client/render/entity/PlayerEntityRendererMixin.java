@@ -1,8 +1,8 @@
 package gg.norisk.subwaysurfers.mixin.client.render.entity;
 
 import gg.norisk.subwaysurfers.SubwaySurfers;
-import gg.norisk.subwaysurfers.common.item.CollectiblesKt;
-import gg.norisk.subwaysurfers.common.item.PowerupKt;
+import gg.norisk.subwaysurfers.common.collectible.Hoverboard;
+import gg.norisk.subwaysurfers.common.collectible.PowerupKt;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -31,7 +31,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
 
     @Inject(method = "getPositionOffset(Lnet/minecraft/client/network/AbstractClientPlayerEntity;F)Lnet/minecraft/util/math/Vec3d;", at = @At("RETURN"), cancellable = true)
     private void injected(AbstractClientPlayerEntity abstractClientPlayerEntity, float f, CallbackInfoReturnable<Vec3d> cir) {
-        if (PowerupKt.hasPowerUp(abstractClientPlayerEntity, CollectiblesKt.getHoverboard())) {
+        if (PowerupKt.hasPowerUp(abstractClientPlayerEntity, Hoverboard.INSTANCE)) {
             Vec3d returnValue = cir.getReturnValue();
             cir.setReturnValue(returnValue.add(0.0, 0.5, 0.0));
         }

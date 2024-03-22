@@ -1,15 +1,15 @@
+@file:Suppress("HasPlatformType")
+
 package gg.norisk.subwaysurfers.subwaysurfers
 
 import gg.norisk.subwaysurfers.client.ClientSettings
-import gg.norisk.subwaysurfers.common.item.hasPowerUp
-import gg.norisk.subwaysurfers.common.item.jetpack
+import gg.norisk.subwaysurfers.common.collectible.Jetpack
+import gg.norisk.subwaysurfers.common.collectible.hasPowerUp
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.MathHelper
-import net.silkmc.silk.core.entity.directionVector
-import net.silkmc.silk.core.entity.modifyVelocity
 
 
 val isEnabled: Boolean
@@ -129,10 +129,10 @@ fun PlayerEntity.handlePunishTicks() {
 }
 
 fun PlayerEntity.getJetpackY(origY: Double): Double {
-    val y = ClientSettings.startPos?.y ?: return origY
-    val targetY = y + 10.0
-    val currentY = MathHelper.lerp(0.1, origY, targetY)
-    if (hasPowerUp(jetpack)) {
+    if (hasPowerUp(Jetpack)) {
+        val y = ClientSettings.startPos?.y ?: return origY
+        val targetY = y + 10.0
+        val currentY = MathHelper.lerp(0.1, origY, targetY)
         return currentY
     }
     return origY

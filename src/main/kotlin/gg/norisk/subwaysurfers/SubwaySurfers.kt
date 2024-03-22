@@ -10,8 +10,7 @@ import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
-import gg.norisk.subwaysurfers.common.item.Collectibles
-import gg.norisk.subwaysurfers.common.item.collectibles
+import gg.norisk.subwaysurfers.common.collectible.Collectibles
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.StartCommand

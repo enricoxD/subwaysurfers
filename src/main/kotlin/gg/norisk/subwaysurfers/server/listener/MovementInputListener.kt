@@ -1,7 +1,7 @@
 package gg.norisk.subwaysurfers.server.listener
 
-import gg.norisk.subwaysurfers.common.item.hasPowerUp
-import gg.norisk.subwaysurfers.common.item.jetpack
+import gg.norisk.subwaysurfers.common.collectible.Jetpack
+import gg.norisk.subwaysurfers.common.collectible.hasPowerUp
 import gg.norisk.subwaysurfers.network.c2s.MovementType
 import gg.norisk.subwaysurfers.network.c2s.movementTypePacket
 import gg.norisk.subwaysurfers.network.s2c.AnimationPacket
@@ -25,7 +25,7 @@ object MovementInputListener {
             val player = context.player
 
             if (packet == MovementType.SLIDE) {
-                if (player.hasPowerUp(jetpack)) return@receiveOnServer
+                if (player.hasPowerUp(Jetpack)) return@receiveOnServer
                 playAnimationS2C.sendToAll(AnimationPacket(player.uuid, "subway_jump"))
                 if (!player.isSliding) {
                     player.isSliding = true

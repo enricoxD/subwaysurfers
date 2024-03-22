@@ -1,7 +1,10 @@
 package gg.norisk.subwaysurfers.registry
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
-import gg.norisk.subwaysurfers.entity.*
+import gg.norisk.subwaysurfers.entity.ModifiedEntityDimensions
+import gg.norisk.subwaysurfers.entity.RampEntity
+import gg.norisk.subwaysurfers.entity.TrafficLightEntity
+import gg.norisk.subwaysurfers.entity.TrainEntity
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.minecraft.entity.EntityDimensions

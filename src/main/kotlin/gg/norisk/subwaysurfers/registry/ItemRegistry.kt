@@ -2,8 +2,6 @@ package gg.norisk.subwaysurfers.registry
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.item.BuilderItem
-import gg.norisk.subwaysurfers.item.HoverboardItem
-import gg.norisk.subwaysurfers.item.JetpackItem
 import gg.norisk.subwaysurfers.item.RemoteDetonatorItem
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.minecraft.item.BlockItem

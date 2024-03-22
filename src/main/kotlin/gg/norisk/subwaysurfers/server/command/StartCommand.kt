@@ -1,8 +1,8 @@
 package gg.norisk.subwaysurfers.server.command
 
 import com.mojang.brigadier.context.CommandContext
-import gg.norisk.subwaysurfers.common.item.Powerup
-import gg.norisk.subwaysurfers.common.item.collectibles
+import gg.norisk.subwaysurfers.common.collectible.Powerup
+import gg.norisk.subwaysurfers.common.collectible.collectibles
 import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager

@@ -1,14 +1,12 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package gg.norisk.subwaysurfers.common.item
+package gg.norisk.subwaysurfers.common.collectible
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.common.entity.CollectibleEntity
 import gg.norisk.subwaysurfers.network.dto.BlockPosDto
-import gg.norisk.subwaysurfers.registry.EntityRegistry
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import kotlinx.serialization.ExperimentalSerializationApi
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.item.ArmorItem

@@ -1,8 +1,9 @@
 package gg.norisk.subwaysurfers.mixin.entity.player;
 
-import gg.norisk.subwaysurfers.common.item.CollectiblesKt;
-import gg.norisk.subwaysurfers.common.item.Powerup;
-import gg.norisk.subwaysurfers.common.item.PowerupKt;
+import gg.norisk.subwaysurfers.common.collectible.CollectiblesKt;
+import gg.norisk.subwaysurfers.common.collectible.Jetpack;
+import gg.norisk.subwaysurfers.common.collectible.Powerup;
+import gg.norisk.subwaysurfers.common.collectible.PowerupKt;
 import gg.norisk.subwaysurfers.event.events.PlayerEvents;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.block.BlockState;
@@ -83,7 +84,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Override
     public boolean hasNoGravity() {
-        var hasJetpack = PowerupKt.hasPowerUp((PlayerEntity) (Object) this, CollectiblesKt.getJetpack());
+        var hasJetpack = PowerupKt.hasPowerUp((PlayerEntity) (Object) this, Jetpack.INSTANCE);
         if (!SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) return super.hasNoGravity();
         else return hasJetpack;
     }

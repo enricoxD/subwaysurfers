@@ -1,6 +1,8 @@
 package gg.norisk.subwaysurfers.client.hud
 
-import gg.norisk.subwaysurfers.client.ClientSettings
+import gg.norisk.subwaysurfers.common.collectible.Jetpack
+import gg.norisk.subwaysurfers.common.collectible.Magnet
+import gg.norisk.subwaysurfers.common.collectible.hasPowerUp
 import gg.norisk.subwaysurfers.subwaysurfers.coins
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import gg.norisk.subwaysurfers.subwaysurfers.multiplier
@@ -73,14 +75,19 @@ object InGameHud : HudRenderCallback {
     }
 
     private fun renderTicks(drawContext: DrawContext, textRenderer: TextRenderer): Int {
-        val ticksSinceStart = String.format("%06d", ClientSettings.ridingTicks)
+        //val ticksSinceStart = String.format("%06d", ClientSettings.ridingTicks)
+        val player = MinecraftClient.getInstance().player ?: return 0
+        val ticksSinceStart = "magnet: ${player.hasPowerUp(Magnet)} | jetpack: ${player.hasPowerUp(Jetpack)}"
         val scale = 2f
         val xOffset = 2
         val x =
             (MinecraftClient.getInstance().window.scaledWidth / scale - xOffset - textRenderer.getWidth(ticksSinceStart)).toInt()
         drawContext.matrices.push()
         drawContext.matrices.scale(scale, scale, scale)
-        drawContext.drawTextWithShadow(textRenderer, ticksSinceStart, x, 2, -1)
+        drawContext.drawTextWithShadow(textRenderer, "world time: ${player.world.time}", x, 2, -1)
+        drawContext.drawTextWithShadow(textRenderer, "magnet time: ${player.dataTracker.get(Magnet.endTimestampTracker)} (${player.hasPowerUp(
+            Magnet)}", x, 12, -1)
+        //drawContext.drawTextWithShadow(textRenderer, ticksSinceStart, x, 12, -1)
         drawContext.fill(
             x - xOffset,
             1,

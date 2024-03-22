@@ -1,7 +1,7 @@
 package gg.norisk.subwaysurfers.item
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
-import gg.norisk.subwaysurfers.common.item.Powerup
+import gg.norisk.subwaysurfers.common.collectible.Powerup
 import net.minecraft.client.render.entity.model.BipedEntityModel
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.LivingEntity

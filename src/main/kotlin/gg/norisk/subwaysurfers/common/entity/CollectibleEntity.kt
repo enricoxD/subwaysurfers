@@ -1,6 +1,6 @@
 package gg.norisk.subwaysurfers.common.entity
 
-import gg.norisk.subwaysurfers.common.item.Collectible
+import gg.norisk.subwaysurfers.common.collectible.Collectible
 import gg.norisk.subwaysurfers.entity.DriveableEntity
 import gg.norisk.subwaysurfers.entity.OriginMarker
 import gg.norisk.subwaysurfers.network.dto.toDto

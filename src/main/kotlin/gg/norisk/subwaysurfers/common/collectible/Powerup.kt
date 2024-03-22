@@ -1,4 +1,4 @@
-package gg.norisk.subwaysurfers.common.item
+package gg.norisk.subwaysurfers.common.collectible
 
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
