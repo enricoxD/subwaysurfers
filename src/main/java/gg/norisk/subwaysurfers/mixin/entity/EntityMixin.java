@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -62,6 +63,15 @@ public abstract class EntityMixin {
             if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
                 ci.cancel();
                 setPosition(getX() + vec3d.x, getY() + vec3d.y, getZ() + vec3d.z);
+            }
+        }
+    }
+
+    @Inject(method = "hasNoGravity", at = @At("HEAD"), cancellable = true)
+    private void hasNoGravityInjection(CallbackInfoReturnable<Boolean> cir) {
+        if ((Object) this instanceof ClientPlayerEntity player) {
+            if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
+                cir.setReturnValue(true);
             }
         }
     }

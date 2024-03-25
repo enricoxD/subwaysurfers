@@ -1,7 +1,6 @@
 package gg.norisk.subwaysurfers.mixin.entity.player;
 
 import gg.norisk.subwaysurfers.common.collectible.CollectiblesKt;
-import gg.norisk.subwaysurfers.common.collectible.Jetpack;
 import gg.norisk.subwaysurfers.common.collectible.Powerup;
 import gg.norisk.subwaysurfers.event.events.PlayerEvents;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
@@ -81,13 +80,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         } else {
             return super.isOnGround();
         }
-    }
-
-    @Override
-    public boolean hasNoGravity() {
-        var hasJetpack = Jetpack.INSTANCE.isActiveFor((PlayerEntity) (Object) this);
-        if (!SubwaySurferKt.isSubwaySurfers((PlayerEntity) (Object) this)) return super.hasNoGravity();
-        else return hasJetpack;
     }
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
