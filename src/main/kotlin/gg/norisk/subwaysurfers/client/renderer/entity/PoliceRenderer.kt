@@ -19,6 +19,7 @@ import net.minecraft.util.math.MathHelper
 import net.silkmc.silk.core.text.literal
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
+
 object PoliceRenderer {
     private val IRON_GOLEM_POLICE_TEXTURE = "textures/entity/police_iron_golem.png".toId()
 
@@ -29,7 +30,7 @@ object PoliceRenderer {
         policeTeleportPacketS2C.receiveOnClient { _, context ->
             val player = context.client.player ?: return@receiveOnClient
             val subwaySurfer = player as? SubwaySurfer? ?: return@receiveOnClient
-            player.lerpedPolicePosition = (player.punishTicks / 20f)
+            player.lerpedPolicePosition = (player.punishTicks / 90f)
         }
     }
 
@@ -45,12 +46,14 @@ object PoliceRenderer {
         val subwaySurfer = player as SubwaySurfer ?: return
         if (player.punishTicks > 0) {
             matrices.push()
-
-            println("${player.punishTicks}")
-            player.lerpedPolicePosition =
-                MathHelper.lerp(tickDelta * 0.05f, player.lerpedPolicePosition, (player.punishTicks / 20f))
+            val speedMultiplier = (1f / (player.punishTicks / 30f))
+            player.lerpedPolicePosition = MathHelper.lerp(
+                tickDelta * 0.5f,
+                player.lerpedPolicePosition,
+                speedMultiplier - player.punishTicks / 90f
+            )
             matrices.translate(0f, 0f, -2f)
-            matrices.translate(0f, 0f, -4f + player.lerpedPolicePosition)
+            matrices.translate(0f, 0f, 0.5f - player.lerpedPolicePosition)
 
             val fakeEntity = EntityType.IRON_GOLEM.create(player.world) ?: return
             fakeEntity.customName = "SubwaySurfersPolice".literal
@@ -74,7 +77,7 @@ object PoliceRenderer {
         player: PlayerEntity,
         i: Int,
     ) {
-        matrices.translate(-1.2f, 0f, 0f)
+        matrices.translate(+1.2f, 0f, 0f)
         val dog = EntityType.WOLF.create(player.world) ?: return
         val dogRenderer = dog.renderer ?: return
 
