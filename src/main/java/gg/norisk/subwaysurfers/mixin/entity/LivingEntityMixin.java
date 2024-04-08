@@ -1,5 +1,6 @@
 package gg.norisk.subwaysurfers.mixin.entity;
 
+import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

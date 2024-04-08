@@ -52,7 +52,7 @@ object PunishManager {
 
     /** check for potential loss, depending on current punish ticks */
     private fun ServerPlayerEntity.checkGameOver() {
-        if (punishTicks > 70) {
+        if (punishTicks > 110) {
             StartCommand.handleGameStop(this)
         }
     }

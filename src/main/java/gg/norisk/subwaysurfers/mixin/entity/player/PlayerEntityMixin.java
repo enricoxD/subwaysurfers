@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.mixin.entity.player;
 
 import gg.norisk.subwaysurfers.event.events.PlayerEvents;
+import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityDimensions;
@@ -12,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -20,7 +22,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity {
+public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySurfer {
+    @Unique
+    private float lerpedPolicePosition;
+
     @Shadow
     public abstract boolean damage(DamageSource source, float amount);
 
@@ -71,6 +76,16 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
+    @Override
+    public void setLerpedPolicePosition(float i) {
+        lerpedPolicePosition = i;
+    }
+
+    @Override
+    public float getLerpedPolicePosition() {
+        return lerpedPolicePosition;
+    }
+
     //TODO das anders coden lol
     @Override
     public boolean isOnGround() {
@@ -84,6 +99,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     private void initDataTrackerInjection(CallbackInfo ci) {
         this.dataTracker.startTracking(SubwaySurferKt.getSlidingTracker(), false);
+        this.dataTracker.startTracking(SubwaySurferKt.getRenderPoliceTracker(), false);
         this.dataTracker.startTracking(SubwaySurferKt.getGravityTracker(), 0.3f);
         this.dataTracker.startTracking(SubwaySurferKt.getDashStrengthTracker(), 2.0f);
         this.dataTracker.startTracking(SubwaySurferKt.getMultiplierTracker(), 1);

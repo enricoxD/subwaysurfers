@@ -9,6 +9,9 @@ import net.minecraft.util.math.MathHelper
 import net.silkmc.silk.core.entity.directionVector
 import net.silkmc.silk.core.entity.modifyVelocity
 
+interface SubwaySurfer {
+    var lerpedPolicePosition: Float
+}
 
 val isEnabled: Boolean
     get() {
@@ -25,6 +28,13 @@ var PlayerEntity.isSliding: Boolean
         this.dataTracker.set(slidingTracker, value)
     }
 
+var PlayerEntity.renderPolice: Boolean
+    get() {
+        return this.dataTracker.get(renderPoliceTracker)
+    }
+    set(value) {
+        this.dataTracker.set(renderPoliceTracker, value)
+    }
 
 var PlayerEntity.punishTicks: Int
     get() {
@@ -166,6 +176,8 @@ val multiplierTracker =
 val punishTicksTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val slidingTracker =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+val renderPoliceTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val subwaySurfersTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)

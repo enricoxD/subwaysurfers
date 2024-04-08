@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers
 
 import gg.norisk.subwaysurfers.client.ClientSettings
+import gg.norisk.subwaysurfers.client.commands.ClientCommands
 import gg.norisk.subwaysurfers.client.hud.GameOverScreen
 import gg.norisk.subwaysurfers.client.hud.InGameHud
 import gg.norisk.subwaysurfers.client.input.KeyboardInput
@@ -10,8 +11,10 @@ import gg.norisk.subwaysurfers.client.listener.ClientAnimationListener
 import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
+import gg.norisk.subwaysurfers.client.renderer.entity.PoliceRenderer
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
+import gg.norisk.subwaysurfers.server.command.ServerDebugCommands
 import gg.norisk.subwaysurfers.server.command.StartCommand
 import gg.norisk.subwaysurfers.server.listener.BasicListener
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
@@ -55,10 +58,12 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
             BasicListener.init()
             ScreenListener.init()
             MovementInputListener.init()
+            ServerDebugCommands.init()
         }
     }
 
     override fun onInitializeClient() {
+        ClientCommands.init()
         EntityRendererRegistry.init()
         ClientCollisionManager.init()
         ClientSettings.init()
@@ -71,12 +76,12 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         StructureManager.initClient()
         ClientGamePreStartLifeCycle.init()
         ClientGameRunningLifeCycle.init()
+        PoliceRenderer.init()
         devCommands()
     }
 
     fun String.toId() = Identifier("subwaysurfers", this)
     val noriskSkin = "textures/norisk_skin.png".toId()
-    val policeSkin = "textures/policeman.png".toId()
     val logger = LoggerFactory.getLogger("subwaysurfers")
 
     private fun serverDevCommands() {

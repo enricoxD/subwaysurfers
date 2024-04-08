@@ -6,6 +6,8 @@
   "mixins": [
     "entity.EntityDimensionsMixin",
     "entity.EntityMixin",
+    "entity.LimbAnimatorAccessor",
+    "entity.LivingEntityAccessor",
     "entity.LivingEntityMixin",
     "entity.player.PlayerEntityMixin",
     "server.network.ServerPlayNetworkHandlerMixin",
@@ -22,6 +24,7 @@
     "client.render.CameraMixin",
     "client.render.GameRendererMixin",
     "client.render.WorldRendererMixin",
+    "client.render.entity.IronGolemEntityRendererMixin",
     "client.render.entity.PlayerEntityRendererMixin",
     "client.structure.StructureTemplateMixin"
   ],
