@@ -50,6 +50,7 @@ object StartCommand {
     fun handleGameStop(player: ServerPlayerEntity) {
         gameOverScreenS2C.send(GameOverDto(player.coins, player.age), player)
         PatternManager.playerPatterns.remove(player.uuid)
+        player.punishTicks = 0
         player.coins = 0
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
         player.rail = 1

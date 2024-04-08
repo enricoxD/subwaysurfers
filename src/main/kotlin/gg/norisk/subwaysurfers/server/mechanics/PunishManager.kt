@@ -46,7 +46,11 @@ object PunishManager {
             0.4f,
             0.8f
         )
-        punishTicks += 109
+        if (punishTicks == 0) {
+            punishTicks += 109
+        } else {
+            punishTicks += 80
+        }
         checkGameOver()
     }
 
