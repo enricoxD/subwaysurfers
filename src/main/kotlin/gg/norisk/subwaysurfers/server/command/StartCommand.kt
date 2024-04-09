@@ -1,6 +1,8 @@
 package gg.norisk.subwaysurfers.server.command
 
 import com.mojang.brigadier.context.CommandContext
+import gg.norisk.subwaysurfers.common.collectible.Powerup
+import gg.norisk.subwaysurfers.common.collectible.collectibles
 import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
@@ -51,6 +53,7 @@ object StartCommand {
         gameOverScreenS2C.send(GameOverDto(player.coins, player.age), player)
         PatternManager.playerPatterns.remove(player.uuid)
         player.punishTicks = 0
+        player.isSubwaySurfers = false
         player.coins = 0
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
         player.rail = 1
@@ -133,6 +136,8 @@ object StartCommand {
         player.isSubwaySurfers = true
         player.coins = 0
         player.punishTicks = 0
+        // reset powerups
+        collectibles.filterIsInstance<Powerup>().forEach { player.dataTracker.set(it.endTimestampTracker, 0L) }
         player.rail = 1
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue =
             ServerConfig.config.surferBaseSpeed

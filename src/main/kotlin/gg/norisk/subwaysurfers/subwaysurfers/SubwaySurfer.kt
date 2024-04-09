@@ -1,13 +1,12 @@
+@file:Suppress("HasPlatformType")
+
 package gg.norisk.subwaysurfers.subwaysurfers
 
-import gg.norisk.subwaysurfers.entity.CoinEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.MathHelper
-import net.silkmc.silk.core.entity.directionVector
-import net.silkmc.silk.core.entity.modifyVelocity
 
 interface SubwaySurfer {
     var lerpedPolicePosition: Float
@@ -122,14 +121,6 @@ var PlayerEntity.isSubwaySurfers: Boolean
         this.dataTracker.set(subwaySurfersTracker, value)
     }
 
-var PlayerEntity.isMagnetic: Boolean
-    get() {
-        return this.dataTracker.get(magnetTracker)
-    }
-    set(value) {
-        this.dataTracker.set(magnetTracker, value)
-    }
-
 var PlayerEntity.coins: Int
     get() {
         return this.dataTracker.get(coinDataTracker)
@@ -141,19 +132,6 @@ var PlayerEntity.coins: Int
 fun PlayerEntity.handlePunishTicks() {
     if (punishTicks > 0) {
         --punishTicks
-    }
-}
-
-fun PlayerEntity.handleMagnet() {
-    if (isMagnetic) {
-        for (coin in world.getEntitiesByClass(CoinEntity::class.java, boundingBox.expand(5.0)) { true }) {
-            val direction =
-                eyePos.add(directionVector.normalize().multiply(2.0)).subtract(coin.pos).normalize().multiply(0.9)
-            coin.modifyVelocity(direction)
-            if (coin.distanceTo(this) < 2) {
-                coin.onPlayerCollision(this)
-            }
-        }
     }
 }
 
@@ -182,6 +160,4 @@ val renderPoliceTracker =
 val subwaySurfersTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val debugModeTracker =
-    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
-val magnetTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
