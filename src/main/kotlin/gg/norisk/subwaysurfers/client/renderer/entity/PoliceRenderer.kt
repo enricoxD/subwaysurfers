@@ -4,6 +4,7 @@ import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.mixin.entity.LimbAnimatorAccessor
 import gg.norisk.subwaysurfers.mixin.entity.LivingEntityAccessor
 import gg.norisk.subwaysurfers.network.s2c.policeTeleportPacketS2C
+import gg.norisk.subwaysurfers.registry.SoundRegistry
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer
 import gg.norisk.subwaysurfers.subwaysurfers.punishTicks
 import net.minecraft.client.MinecraftClient
@@ -30,6 +31,7 @@ object PoliceRenderer {
         policeTeleportPacketS2C.receiveOnClient { _, context ->
             val player = context.client.player ?: return@receiveOnClient
             val subwaySurfer = player as? SubwaySurfer? ?: return@receiveOnClient
+            player.playSound(SoundRegistry.POLICE, 0.8f, 1f)
             player.lerpedPolicePosition = (player.punishTicks / 90f)
         }
     }

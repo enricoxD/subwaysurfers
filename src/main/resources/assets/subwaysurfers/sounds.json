@@ -3,5 +3,10 @@
     "sounds": [
       "subwaysurfers:whoosh"
     ]
+  },
+  "police": {
+    "sounds": [
+      "subwaysurfers:police"
+    ]
   }
 }
