@@ -8,10 +8,8 @@ import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
@@ -28,9 +26,11 @@ public abstract class CameraMixin {
     @Unique
     private double customY;
 
-    @ModifyConstant(method = "update", constant = @Constant(doubleValue = 4.0))
-    private double subwaySurfersIncreaseCameraDistance(double constant) {
-        return (ClientSettings.INSTANCE.useSubwayCamera()) ? ClientSettings.INSTANCE.getCameraSettings().getDesiredCameraDistance() : constant;
+    @ModifyArgs(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;moveBy(DDD)V", ordinal = 0))
+    private void setPosInjection(Args args) {
+        if (ClientSettings.INSTANCE.useSubwayCamera()) {
+            args.set(0, -ClientSettings.INSTANCE.getCameraSettings().getDesiredCameraDistance());
+        }
     }
 
     @ModifyArgs(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;setPos(DDD)V"))

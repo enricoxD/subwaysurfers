@@ -43,7 +43,8 @@ class BuilderItem(settings: Settings) : Item(settings) {
             EntityRegistry.TRAIN.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
         }),
         RAMP(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
-            EntityRegistry.RAMP.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
+            val ramp = EntityRegistry.RAMP.spawn(worldAccess as ServerWorld, blockPos, SpawnReason.SPAWN_EGG)
+            ramp?.placeStairs()
         }),
         COIN(callback = { player, blockState, worldAccess, blockPos, bl, itemStack ->
             val coin =

@@ -2,10 +2,14 @@ package gg.norisk.subwaysurfers.registry
 
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.block.BottomBarrierBlock
+import gg.norisk.subwaysurfers.block.RampBlock
 import gg.norisk.subwaysurfers.block.SubwayRailBlock
 import gg.norisk.subwaysurfers.block.TopBarrierBlock
 import net.minecraft.block.AbstractBlock
 import net.minecraft.block.Block
+import net.minecraft.block.MapColor
+import net.minecraft.block.SlabBlock
+import net.minecraft.block.enums.Instrument
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.sound.BlockSoundGroup
@@ -14,6 +18,12 @@ object BlockRegistry {
     val SUBWAY_RAIL = registerBlock(
         "subway_rail", SubwayRailBlock(
             AbstractBlock.Settings.create().noCollision().nonOpaque().strength(0.7f).sounds(BlockSoundGroup.METAL)
+        )
+    )
+    val BARRIER_SLAB = registerBlock(
+        "barrier_slab",
+        SlabBlock(
+            AbstractBlock.Settings.create().nonOpaque()
         )
     )
     val BOTTOM_BARRIER = registerBlock(
