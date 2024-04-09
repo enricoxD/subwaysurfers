@@ -1,16 +1,15 @@
-package gg.norisk.subwaysurfers.client.structure
+package gg.norisk.subwaysurfers.common.structure
 
 import net.minecraft.block.BlockState
-import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.structure.StructurePlacementData
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.random.Random
+import net.minecraft.world.World
 
-interface ClientStructureTemplate {
-    fun placeClient(
-        clientWorld: ClientWorld,
+interface ModifiedStructureTemplate {
+    fun modifiedPlace(
+        world: World,
         blockPos: BlockPos,
         blockPos2: BlockPos,
         structurePlacementData: StructurePlacementData,
@@ -20,6 +19,4 @@ interface ClientStructureTemplate {
         blocks: MutableMap<BlockPos, BlockState>?,
         entities: MutableSet<Entity>?,
     ): Boolean
-
-    fun tick(playerEntity: PlayerEntity)
 }

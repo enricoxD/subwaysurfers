@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.client
 
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGamePreStartLifeCycle.isPreStarting
+import gg.norisk.subwaysurfers.event.events.WorldEvents
 import gg.norisk.subwaysurfers.network.c2s.trackListRequestPacketC2S
 import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
@@ -14,8 +15,6 @@ import net.minecraft.client.option.Perspective
 import net.minecraft.util.math.Vec3d
 import java.io.File
 
-//TODO 2 Neue Blöcke (Absperrband und So drunter Rutschen)
-
 object ClientSettings : ClientTickEvents.EndTick {
     var isRunning: Boolean = false
     var cameraSettings = CameraSettings()
@@ -24,6 +23,10 @@ object ClientSettings : ClientTickEvents.EndTick {
     val baseFolder = File("config", "subwaysurfers/maps").apply { mkdirs() }
 
     fun init() {
+        WorldEvents.clientJoinWorldEvent.listen { event ->
+            disable()
+        }
+
         cameraSettingsPacket.receiveOnClient { packet, context ->
             cameraSettings = packet
         }

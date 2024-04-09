@@ -3,10 +3,16 @@ package gg.norisk.subwaysurfers.server.command
 import com.mojang.brigadier.context.CommandContext
 import gg.norisk.subwaysurfers.common.collectible.Powerup
 import gg.norisk.subwaysurfers.common.collectible.collectibles
+import gg.norisk.subwaysurfers.common.world.AbstractPatternGenerator
+import gg.norisk.subwaysurfers.extensions.toBlockPos
+import gg.norisk.subwaysurfers.extensions.toStack
 import gg.norisk.subwaysurfers.network.s2c.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
+import gg.norisk.subwaysurfers.server.structure.ServerStructureManager
+import gg.norisk.subwaysurfers.server.world.ServerPatternGenerator
+import gg.norisk.subwaysurfers.server.world.ServerRailPatternGenerator
 import gg.norisk.subwaysurfers.subwaysurfers.*
 import net.minecraft.block.Blocks
 import net.minecraft.entity.attribute.EntityAttributes
@@ -14,10 +20,13 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.util.BlockMirror
+import net.minecraft.util.math.Vec3d
 import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.kotlin.ticks
 import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.text.literalText
+import java.util.*
 
 object StartCommand {
     fun init() {
@@ -49,12 +58,19 @@ object StartCommand {
         }
     }
 
-    fun handleGameStop(player: ServerPlayerEntity) {
-        gameOverScreenS2C.send(GameOverDto(player.coins, player.age), player)
+    fun handleGameStop(player: ServerPlayerEntity, sendPacket: Boolean = true) {
+        val subwaySurfer = player as? SubwaySurfer? ?: return
+        if (sendPacket) {
+            gameOverScreenS2C.send(GameOverDto(player.coins, player.age), player)
+        }
         PatternManager.playerPatterns.remove(player.uuid)
         player.punishTicks = 0
         player.isSubwaySurfers = false
         player.coins = 0
+        player.lastPatternUpdatePos = 0
+        player.leftWallPatternGenerator = null
+        player.railPatternGenerator = null
+        player.rightWallPatternGenerator = null
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)?.baseValue = SpeedManager.vanillaSpeed
         player.rail = 1
         player.world.playSoundFromEntity(
@@ -76,6 +92,7 @@ object StartCommand {
     ) {
         val startStopPacket = StartStopPacket()
         val cameraSettings = CameraSettings()
+        val subwaySurfer = player as? SubwaySurfer? ?: return
         isEnabled.apply { startStopPacket.isEnabled = this }
         cameraDistanceArg?.apply { cameraSettings.desiredCameraDistance = this }
         yawArg?.apply { cameraSettings.yaw = this }
@@ -97,6 +114,7 @@ object StartCommand {
                 0f
             )
 
+            player.isPreStarting = true
             val startTime = 3L
             val railPattern =
                 PatternManager.playerPatterns.computeIfAbsent(player.uuid) { PatternManager.getRailPattern() }
@@ -105,13 +123,39 @@ object StartCommand {
                 railPattern.map { it.railName },
                 PatternManager.getEnvironmentPattern()
             )
-            preStartS2C.send(
-                PreStartS2C(
-                    ServerConfig.config.startPos,
-                    patternPacket,
-                    startTime,
-                    cameraSettings
-                ), player
+            val preStartPacket = PreStartS2C(
+                ServerConfig.config.startPos,
+                patternPacket,
+                startTime,
+                cameraSettings
+            )
+            preStartS2C.send(preStartPacket, player)
+
+            val startPos = Vec3d(preStartPacket.startPos.x, preStartPacket.startPos.y, preStartPacket.startPos.z)
+
+            player.leftWallPatternGenerator = ServerPatternGenerator(
+                startPos = startPos.add(
+                    AbstractPatternGenerator.leftOffset + AbstractPatternGenerator.offset,
+                    -1.0,
+                    0.0
+                ).toBlockPos(),
+                structureManager = ServerStructureManager,
+                patternStack = Stack<Stack<String>>().apply { add(patternPacket.left.toStack()) }
+            )
+            player.railPatternGenerator = ServerRailPatternGenerator(
+                startPos = startPos.add(0.0, -1.0, 0.0).toBlockPos(),
+                structureManager = ServerStructureManager,
+                patternStack = Stack<Stack<String>>().apply { add(patternPacket.middle.toStack()) }
+            )
+            player.rightWallPatternGenerator = ServerPatternGenerator(
+                startPos = startPos.add(
+                    AbstractPatternGenerator.rightOffset - AbstractPatternGenerator.offset,
+                    -1.0,
+                    0.0
+                ).toBlockPos(),
+                structureManager = ServerStructureManager,
+                patternStack = Stack<Stack<String>>().apply { add(patternPacket.right.toStack()) },
+                mirror = BlockMirror.FRONT_BACK
             )
 
             startTimer(startTime, player, startStopPacket)
@@ -134,8 +178,10 @@ object StartCommand {
 
     private fun start(player: ServerPlayerEntity, settings: StartStopPacket) {
         player.isSubwaySurfers = true
+        player.lastPatternUpdatePos = 0
         player.coins = 0
         player.punishTicks = 0
+        player.isPreStarting = false
         // reset powerups
         collectibles.filterIsInstance<Powerup>().forEach { player.dataTracker.set(it.endTimestampTracker, 0L) }
         player.rail = 1

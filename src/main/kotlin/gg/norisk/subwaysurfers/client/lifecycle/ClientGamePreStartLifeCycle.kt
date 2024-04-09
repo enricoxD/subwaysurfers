@@ -1,11 +1,15 @@
 package gg.norisk.subwaysurfers.client.lifecycle
 
 import gg.norisk.subwaysurfers.client.ClientSettings
+import gg.norisk.subwaysurfers.client.structure.ClientStructureManager
+import gg.norisk.subwaysurfers.client.world.ClientPatternGenerator
+import gg.norisk.subwaysurfers.client.world.ClientRailPatternGenerator
+import gg.norisk.subwaysurfers.common.world.AbstractPatternGenerator
 import gg.norisk.subwaysurfers.extensions.toBlockPos
 import gg.norisk.subwaysurfers.extensions.toStack
 import gg.norisk.subwaysurfers.network.s2c.preStartS2C
-import gg.norisk.subwaysurfers.worldgen.PatternGenerator
-import gg.norisk.subwaysurfers.worldgen.RailPatternGenerator
+import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer
+import gg.norisk.subwaysurfers.subwaysurfers.isPreStarting
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.Perspective
 import net.minecraft.sound.SoundEvents
@@ -17,31 +21,35 @@ import net.silkmc.silk.core.text.literalText
 import java.util.*
 
 object ClientGamePreStartLifeCycle {
-    var leftWallPatternGenerator: PatternGenerator? = null
-    var railPatternGenerator: RailPatternGenerator? = null
-    var rightWallPatternGenerator: PatternGenerator? = null
-    var startTime: Long = System.currentTimeMillis()
 
     fun init() {
         preStartS2C.receiveOnClient { packet, context ->
             val player = context.client.player ?: return@receiveOnClient
+            val subwaySurfer = player as? SubwaySurfer? ?: return@receiveOnClient
             val pattern = packet.initialPattern
             val startPos = Vec3d(packet.startPos.x, packet.startPos.y, packet.startPos.z)
-            startTime = System.currentTimeMillis() + (packet.howLong * 1000L)
 
-            val leftOffset = 4.0
-            val rightOffset = -20.0
-            val offset = 0.0
-            leftWallPatternGenerator = PatternGenerator(
-                startPos = startPos.add(leftOffset + offset, -1.0, 0.0).toBlockPos(),
+            player.leftWallPatternGenerator = ClientPatternGenerator(
+                startPos = startPos.add(
+                    AbstractPatternGenerator.leftOffset + AbstractPatternGenerator.offset,
+                    -1.0,
+                    0.0
+                ).toBlockPos(),
+                structureManager = ClientStructureManager,
                 patternStack = Stack<Stack<String>>().apply { add(pattern.left.toStack()) }
             )
-            railPatternGenerator = RailPatternGenerator(
+            player.railPatternGenerator = ClientRailPatternGenerator(
                 startPos = startPos.add(0.0, -1.0, 0.0).toBlockPos(),
+                structureManager = ClientStructureManager,
                 patternStack = Stack<Stack<String>>().apply { add(pattern.middle.toStack()) }
             )
-            rightWallPatternGenerator = PatternGenerator(
-                startPos = startPos.add(rightOffset - offset, -1.0, 0.0).toBlockPos(),
+            player.rightWallPatternGenerator = ClientPatternGenerator(
+                startPos = startPos.add(
+                    AbstractPatternGenerator.rightOffset - AbstractPatternGenerator.offset,
+                    -1.0,
+                    0.0
+                ).toBlockPos(),
+                structureManager = ClientStructureManager,
                 patternStack = Stack<Stack<String>>().apply { add(pattern.right.toStack()) },
                 mirror = BlockMirror.FRONT_BACK
             )
@@ -87,6 +95,6 @@ object ClientGamePreStartLifeCycle {
     }
 
     fun isPreStarting(): Boolean {
-        return System.currentTimeMillis() < startTime
+        return MinecraftClient.getInstance().player?.isPreStarting == true
     }
 }

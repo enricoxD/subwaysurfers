@@ -20,7 +20,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegis
 import software.bernie.geckolib.util.GeckoLibUtil
 
 class CollectibleEntity(
-    private val collectible: Collectible,
+    val collectible: Collectible,
     type: EntityType<out AnimalEntity>,
     level: World
 ) : DriveableEntity(type, level), GeoEntity, OriginMarker {
@@ -28,16 +28,16 @@ class CollectibleEntity(
     private val cache: AnimatableInstanceCache = GeckoLibUtil.createInstanceCache(this)
 
     override fun pushAwayFrom(entity: Entity?) {
-        super.pushAwayFrom(entity)
     }
+
     override fun pushAway(entity: Entity?) {
-        super.pushAway(entity)
     }
+
     override fun playStepSound(pos: BlockPos, block: BlockState) {}
 
     override fun onPlayerCollision(player: PlayerEntity) {
         if (world.isClient && player.isSubwaySurfers && player is ClientPlayerEntity) {
-            collectible.pickupPacket.send(this.blockPos.toDto())
+            collectible.pickupPacket.send(this.origin.toDto())
             this.discard()
         }
     }

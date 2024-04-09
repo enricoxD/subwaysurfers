@@ -5,6 +5,7 @@ package gg.norisk.subwaysurfers.common.collectible
 import gg.norisk.subwaysurfers.SubwaySurfers.toId
 import gg.norisk.subwaysurfers.common.entity.CollectibleEntity
 import gg.norisk.subwaysurfers.network.dto.BlockPosDto
+import gg.norisk.subwaysurfers.server.mechanics.CollectibleManager
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import kotlinx.serialization.ExperimentalSerializationApi
 import net.minecraft.entity.Entity
@@ -28,10 +29,11 @@ open class Collectible(
     val pickupPacket = c2sPacket<BlockPosDto>("item_${id}_pickup".toId())
 
     init {
-        pickupPacket.receiveOnServer { _, context ->
+        pickupPacket.receiveOnServer { position, context ->
             // TODO position check; currently we just assume that the item exists and the player really picked it up
-
-            context.player.takeIf { it.isSubwaySurfers }?.let(::onPickupServer)
+            if (CollectibleManager.validatePickup(context.player, position, this)) {
+                context.player.takeIf { it.isSubwaySurfers }?.let(::onPickupServer)
+            }
         }
     }
 

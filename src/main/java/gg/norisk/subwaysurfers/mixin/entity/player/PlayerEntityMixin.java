@@ -1,7 +1,9 @@
 package gg.norisk.subwaysurfers.mixin.entity.player;
 
+import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle;
 import gg.norisk.subwaysurfers.common.collectible.CollectiblesKt;
 import gg.norisk.subwaysurfers.common.collectible.Powerup;
+import gg.norisk.subwaysurfers.common.world.AbstractPatternGenerator;
 import gg.norisk.subwaysurfers.event.events.PlayerEvents;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
@@ -13,6 +15,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,6 +37,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
     @Shadow
     public abstract float getMovementSpeed();
 
+    @Unique
+    private AbstractPatternGenerator leftPatternGenerator;
+    @Unique
+    private AbstractPatternGenerator railPatternGenerator;
+    @Unique
+    private AbstractPatternGenerator rightPatternGenerator;
+
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -46,6 +56,21 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tickInjection(CallbackInfo ci) {
+        if (SubwaySurferKt.isSubwaySurfersOrSpectator((PlayerEntity) (Object) this) || SubwaySurferKt.isPreStarting((PlayerEntity) (Object) this)) {
+            if (getWorld().isClient) {
+                ClientGameRunningLifeCycle.INSTANCE.clearFakeBlocksAndEntities(false);
+            }
+            if (leftPatternGenerator != null) {
+                leftPatternGenerator.tick((PlayerEntity) (Object) this);
+            }
+            if (railPatternGenerator != null) {
+                railPatternGenerator.tick((PlayerEntity) (Object) this);
+            }
+            if (rightPatternGenerator != null) {
+                rightPatternGenerator.tick((PlayerEntity) (Object) this);
+            }
+        }
+
         if (!this.getWorld().isClient) {
             SubwaySurferKt.handlePunishTicks((PlayerEntity) (Object) this);
         } else {
@@ -100,7 +125,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     private void initDataTrackerInjection(CallbackInfo ci) {
         this.dataTracker.startTracking(SubwaySurferKt.getSlidingTracker(), false);
-        this.dataTracker.startTracking(SubwaySurferKt.getRenderPoliceTracker(), false);
+        this.dataTracker.startTracking(SubwaySurferKt.getPreStartingTracker(), false);
         this.dataTracker.startTracking(SubwaySurferKt.getGravityTracker(), 0.3f);
         this.dataTracker.startTracking(SubwaySurferKt.getDashStrengthTracker(), 2.0f);
         this.dataTracker.startTracking(SubwaySurferKt.getMultiplierTracker(), 1);
@@ -125,5 +150,38 @@ public abstract class PlayerEntityMixin extends LivingEntity implements SubwaySu
                 cir.setReturnValue(new ItemStack(powerup.getItem()));
             }
         }
+    }
+
+    @Override
+    public void setLeftWallPatternGenerator(@Nullable AbstractPatternGenerator abstractPatternGenerator) {
+        leftPatternGenerator = abstractPatternGenerator;
+    }
+
+    @Override
+    public void setRailPatternGenerator(@Nullable AbstractPatternGenerator abstractPatternGenerator) {
+        railPatternGenerator = abstractPatternGenerator;
+    }
+
+    @Override
+    public void setRightWallPatternGenerator(@Nullable AbstractPatternGenerator abstractPatternGenerator) {
+        rightPatternGenerator = abstractPatternGenerator;
+    }
+
+    @Nullable
+    @Override
+    public AbstractPatternGenerator getLeftWallPatternGenerator() {
+        return leftPatternGenerator;
+    }
+
+    @Nullable
+    @Override
+    public AbstractPatternGenerator getRailPatternGenerator() {
+        return railPatternGenerator;
+    }
+
+    @Nullable
+    @Override
+    public AbstractPatternGenerator getRightWallPatternGenerator() {
+        return rightPatternGenerator;
     }
 }

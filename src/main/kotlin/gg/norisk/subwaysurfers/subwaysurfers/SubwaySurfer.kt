@@ -2,6 +2,7 @@
 
 package gg.norisk.subwaysurfers.subwaysurfers
 
+import gg.norisk.subwaysurfers.common.world.AbstractPatternGenerator
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
@@ -10,6 +11,9 @@ import net.minecraft.util.math.MathHelper
 
 interface SubwaySurfer {
     var lerpedPolicePosition: Float
+    var leftWallPatternGenerator: AbstractPatternGenerator?
+    var railPatternGenerator: AbstractPatternGenerator?
+    var rightWallPatternGenerator: AbstractPatternGenerator?
 }
 
 val isEnabled: Boolean
@@ -27,12 +31,12 @@ var PlayerEntity.isSliding: Boolean
         this.dataTracker.set(slidingTracker, value)
     }
 
-var PlayerEntity.renderPolice: Boolean
+var PlayerEntity.isPreStarting: Boolean
     get() {
-        return this.dataTracker.get(renderPoliceTracker)
+        return this.dataTracker.get(preStartingTracker)
     }
     set(value) {
-        this.dataTracker.set(renderPoliceTracker, value)
+        this.dataTracker.set(preStartingTracker, value)
     }
 
 var PlayerEntity.punishTicks: Int
@@ -155,7 +159,7 @@ val punishTicksTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.INTEGER)
 val slidingTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
-val renderPoliceTracker =
+val preStartingTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val subwaySurfersTracker =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)

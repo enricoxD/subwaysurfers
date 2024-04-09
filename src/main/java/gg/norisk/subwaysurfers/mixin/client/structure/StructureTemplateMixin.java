@@ -3,7 +3,7 @@ package gg.norisk.subwaysurfers.mixin.client.structure;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import gg.norisk.subwaysurfers.client.lifecycle.ClientGameRunningLifeCycle;
-import gg.norisk.subwaysurfers.client.structure.ClientStructureTemplate;
+import gg.norisk.subwaysurfers.common.structure.ModifiedStructureTemplate;
 import gg.norisk.subwaysurfers.entity.OriginMarker;
 import gg.norisk.subwaysurfers.entity.UUIDMarker;
 import net.minecraft.block.Block;
@@ -15,7 +15,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.LootableInventory;
 import net.minecraft.nbt.NbtCompound;
@@ -27,10 +26,15 @@ import net.minecraft.structure.processor.StructureProcessor;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Clearable;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.BitSetVoxelSet;
 import net.minecraft.util.shape.VoxelSet;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.silkmc.silk.core.world.block.BlockInfo;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +44,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Mixin(StructureTemplate.class)
-public abstract class StructureTemplateMixin implements ClientStructureTemplate {
+public abstract class StructureTemplateMixin implements ModifiedStructureTemplate {
 
     @Shadow
     @Final
@@ -61,16 +69,8 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
     }
 
     @Unique
-    @Override
-    public void tick(@NotNull PlayerEntity player) {
-    }
-
-    @Unique
-    private final Map<BlockPos, BlockState> blocks = new HashMap<>();
-
-    @Unique
     private void spawnEntitiesClient(
-            ClientWorld world,
+            World world,
             BlockPos blockPos,
             BlockMirror blockMirror,
             BlockRotation blockRotation,
@@ -108,7 +108,9 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
                     if (entities != null) {
                         entities.add(entity);
                     } else {
-                        world.addEntity(entity);
+                        if (world instanceof ClientWorld clientWorld) {
+                            clientWorld.addEntity(entity);
+                        }
                         entity.streamSelfAndPassengers().forEach(world::spawnEntity);
                     }
                 });
@@ -133,7 +135,7 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
 
     @Unique
     private static List<StructureTemplate.StructureBlockInfo> processClient(
-            ClientWorld serverWorldAccess,
+            World world,
             BlockPos blockPos,
             BlockPos blockPos2,
             StructurePlacementData structurePlacementData,
@@ -150,7 +152,7 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
             Iterator<StructureProcessor> iterator = structurePlacementData.getProcessors().iterator();
 
             while (structureBlockInfo2 != null && iterator.hasNext()) {
-                structureBlockInfo2 = iterator.next().process(serverWorldAccess, blockPos, blockPos2, structureBlockInfo, structureBlockInfo2, structurePlacementData);
+                structureBlockInfo2 = iterator.next().process(world, blockPos, blockPos2, structureBlockInfo, structureBlockInfo2, structurePlacementData);
             }
 
             if (structureBlockInfo2 != null) {
@@ -162,8 +164,8 @@ public abstract class StructureTemplateMixin implements ClientStructureTemplate 
     }
 
     @Unique
-    public boolean placeClient(
-            @NotNull ClientWorld world,
+    public boolean modifiedPlace(
+            @NotNull World world,
             @NotNull BlockPos blockPos, @NotNull
             BlockPos blockPos2,
             @NotNull StructurePlacementData structurePlacementData,

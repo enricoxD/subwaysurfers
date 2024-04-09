@@ -4,37 +4,24 @@ import gg.norisk.subwaysurfers.entity.UUIDMarker
 import gg.norisk.subwaysurfers.extensions.toStack
 import gg.norisk.subwaysurfers.mixin.world.WorldAccessor
 import gg.norisk.subwaysurfers.network.s2c.patternPacketS2C
-import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfersOrSpectator
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.silkmc.silk.core.task.mcCoroutineTask
 import net.silkmc.silk.core.world.block.BlockInfo
 
-object ClientGameRunningLifeCycle : ClientTickEvents.EndWorldTick {
+object ClientGameRunningLifeCycle {
     var fakeBlocks = mutableListOf<BlockInfo>()
 
     fun init() {
         patternPacketS2C.receiveOnClient { packet, context ->
             val player = MinecraftClient.getInstance().player ?: return@receiveOnClient
-            ClientGamePreStartLifeCycle.leftWallPatternGenerator?.patternStack?.add(packet.left.toStack())
-            ClientGamePreStartLifeCycle.railPatternGenerator?.patternStack?.add(packet.middle.toStack())
-            ClientGamePreStartLifeCycle.rightWallPatternGenerator?.patternStack?.add(packet.right.toStack())
-        }
-
-        ClientTickEvents.END_WORLD_TICK.register(this)
-    }
-
-    override fun onEndTick(world: ClientWorld) {
-        val player = MinecraftClient.getInstance().player ?: return
-        if (player.isSubwaySurfersOrSpectator || ClientGamePreStartLifeCycle.isPreStarting()) {
-            clearFakeBlocksAndEntities()
-            ClientGamePreStartLifeCycle.leftWallPatternGenerator?.tick(player)
-            ClientGamePreStartLifeCycle.railPatternGenerator?.tick(player)
-            ClientGamePreStartLifeCycle.rightWallPatternGenerator?.tick(player)
+            val subwaySurfer = player as? SubwaySurfer ?: return@receiveOnClient
+            player.leftWallPatternGenerator?.patternStack?.add(packet.left.toStack())
+            player.railPatternGenerator?.patternStack?.add(packet.middle.toStack())
+            player.rightWallPatternGenerator?.patternStack?.add(packet.right.toStack())
         }
     }
 

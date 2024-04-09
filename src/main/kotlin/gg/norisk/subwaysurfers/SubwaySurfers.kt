@@ -12,6 +12,7 @@ import gg.norisk.subwaysurfers.client.listener.GameOverListener
 import gg.norisk.subwaysurfers.client.mechanics.ClientCollisionManager
 import gg.norisk.subwaysurfers.client.renderer.ShaderManager
 import gg.norisk.subwaysurfers.client.renderer.entity.PoliceRenderer
+import gg.norisk.subwaysurfers.client.structure.ClientStructureManager
 import gg.norisk.subwaysurfers.common.collectible.Collectibles
 import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
@@ -23,7 +24,6 @@ import gg.norisk.subwaysurfers.server.listener.ScreenListener
 import gg.norisk.subwaysurfers.server.mechanics.PatternManager
 import gg.norisk.subwaysurfers.server.mechanics.PunishManager
 import gg.norisk.subwaysurfers.server.mechanics.SpeedManager
-import gg.norisk.subwaysurfers.worldgen.StructureManager
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.api.EnvType
@@ -74,7 +74,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
         ClientAnimationListener.init()
         GameOverListener.init()
         ShaderManager.init()
-        StructureManager.initClient()
+        ClientStructureManager.init()
         ClientGamePreStartLifeCycle.init()
         ClientGameRunningLifeCycle.init()
         PoliceRenderer.init()

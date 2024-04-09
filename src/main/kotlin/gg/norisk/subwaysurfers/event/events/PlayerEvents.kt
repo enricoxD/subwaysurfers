@@ -2,6 +2,7 @@ package gg.norisk.subwaysurfers.event.events
 
 import net.minecraft.block.BlockState
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.world.World
 import net.silkmc.silk.core.event.Event
 
 object PlayerEvents {

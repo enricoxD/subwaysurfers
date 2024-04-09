@@ -1,8 +1,11 @@
 package gg.norisk.subwaysurfers.server.mechanics
 
 import gg.norisk.subwaysurfers.SubwaySurfers.logger
+import gg.norisk.subwaysurfers.extensions.toStack
 import gg.norisk.subwaysurfers.network.c2s.trackListRequestPacketC2S
 import gg.norisk.subwaysurfers.network.s2c.*
+import gg.norisk.subwaysurfers.server.structure.ServerStructureManager
+import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurfer
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import gg.norisk.subwaysurfers.subwaysurfers.lastPatternUpdatePos
 import gg.norisk.subwaysurfers.utils.HashUtils
@@ -80,12 +83,15 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
                 )
                 logger.info("Added: $railPattern")
                 rails.add(railPattern)
+
+                ServerStructureManager.createStructure(railPattern, file)
             }
         }
     }
 
     override fun onEndTick(world: ServerWorld) {
         for (playerEntity in world.players.filter { it.isSubwaySurfers }) {
+            val subwaySurfer = playerEntity as? SubwaySurfer ?: continue
             val pos = playerEntity.z.absoluteValue.toInt()
             if (pos.mod(NEW_PATTERN_DISTANCE) == 0 && pos != playerEntity.lastPatternUpdatePos) {
                 playerEntity.lastPatternUpdatePos = pos
@@ -94,11 +100,16 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
                 val nextPattern = getRailPattern(firstTrack = lastPatterns.last())
                 playerPatterns[playerEntity.uuid] = nextPattern
 
-                patternPacketS2C.send(
-                    PatternPacket(
-                        getEnvironmentPattern(), nextPattern.map { it.railName }, getEnvironmentPattern()
-                    ), playerEntity
+                val pattern = PatternPacket(
+                    getEnvironmentPattern(),
+                    nextPattern.map { it.railName },
+                    getEnvironmentPattern()
                 )
+                patternPacketS2C.send(pattern, playerEntity)
+
+                playerEntity.leftWallPatternGenerator?.patternStack?.add(pattern.left.toStack())
+                playerEntity.railPatternGenerator?.patternStack?.add(pattern.middle.toStack())
+                playerEntity.rightWallPatternGenerator?.patternStack?.add(pattern.right.toStack())
             }
         }
     }
