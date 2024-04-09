@@ -37,8 +37,6 @@ open class Powerup(
         val duration = calculateDuration(player)
         val endTimestamp = player.world.time + (duration.inWholeMilliseconds / 50)
 
-        // todo equip the power-up on the specified armor slot (maybe only do this on the client?)
-
         // update the end timestamp for client(s)
         player.dataTracker.set(endTimestampTracker, endTimestamp)
     }
