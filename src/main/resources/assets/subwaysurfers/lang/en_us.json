@@ -19,5 +19,10 @@
   "ui.gameover.play": "PLAY",
   "ui.gameover.stats": "STATS",
   "ui.gameover.friends": "FRIENDS",
-  "ui.gameover.global": "GLOBAL"
+  "ui.gameover.global": "GLOBAL",
+  "download.checking-for-updates": "Checking for updates...",
+  "download.no-updates": "No updates found :)!",
+  "download.found-updates": "Found %s updates!",
+  "download.successful": "Successfully downloaded %s",
+  "download.error": "Error downloading %s"
 }
