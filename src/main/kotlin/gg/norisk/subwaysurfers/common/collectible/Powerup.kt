@@ -74,6 +74,7 @@ open class Powerup(
         }
     }
 
+    fun getTimeLeft(player: PlayerEntity) = player.dataTracker.get(endTimestampTracker) - player.world.time
     fun isActiveFor(player: PlayerEntity) = player.dataTracker.get(endTimestampTracker) > player.world.time
 }
 

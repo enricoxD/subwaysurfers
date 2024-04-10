@@ -25,6 +25,7 @@ abstract class AbstractPatternGenerator(
         val offset = 0.0
     }
 
+    var renderDistance = 48 //TODO maybe setting?
     var nextZ = startPos.z
     var currentPatternStack: Stack<String> = patternStack.pop()
     var lastStructure: String = ""
@@ -97,10 +98,9 @@ abstract class AbstractPatternGenerator(
     }
 
     private fun handleEntitySpawn(player: PlayerEntity) {
-        val offset = 16
         val entitiesToRemove = mutableSetOf<Entity>()
         for (entity in entitiesToPlace) {
-            if (entity.z - offset < player.z) {
+            if (entity.z - renderDistance < player.z) {
                 entitiesToRemove.add(entity)
                 onEntitySpawn(entity, player, player.world)
             }
@@ -110,10 +110,9 @@ abstract class AbstractPatternGenerator(
 
     private fun handleBlockPlace(player: PlayerEntity) {
         val world = player.world
-        val offset = 16
         val toRemove: MutableSet<BlockPos> = HashSet()
         for (blockPos in blocksToPlace.keys) {
-            if (blockPos.z - offset < player.z) {
+            if (blockPos.z - renderDistance < player.z) {
                 toRemove.add(blockPos)
             }
         }

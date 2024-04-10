@@ -1,6 +1,7 @@
 package gg.norisk.subwaysurfers.client.hud
 
 import gg.norisk.subwaysurfers.client.ClientSettings
+import gg.norisk.subwaysurfers.common.collectible.*
 import gg.norisk.subwaysurfers.subwaysurfers.coins
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
 import gg.norisk.subwaysurfers.subwaysurfers.multiplier
@@ -8,6 +9,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.item.Items
 
 object InGameHud : HudRenderCallback {
@@ -16,9 +18,10 @@ object InGameHud : HudRenderCallback {
     }
 
     override fun onHudRender(drawContext: DrawContext, tickDelta: Float) {
+        val textRenderer = MinecraftClient.getInstance().textRenderer
         if (MinecraftClient.getInstance().player?.isSubwaySurfers == true && MinecraftClient.getInstance().currentScreen == null) {
-            val textRenderer = MinecraftClient.getInstance().textRenderer
             val tickX = renderTicks(drawContext, textRenderer)
+            renderCollectibles(drawContext, textRenderer)
             renderCoins(drawContext, textRenderer)
             renderMultiplier(drawContext, textRenderer, tickX)
         }
@@ -43,6 +46,35 @@ object InGameHud : HudRenderCallback {
             -1072689136
         )
         drawContext.matrices.pop()
+    }
+
+    private fun renderCollectibles(drawContext: DrawContext, textRenderer: TextRenderer) {
+        val player = MinecraftClient.getInstance().player ?: return
+        val scale = 1.5f
+
+        for ((index, powerup) in collectibles.filterIsInstance<Powerup>().filter { player.hasPowerUp(it) }
+            .withIndex()) {
+            drawContext.matrices.push()
+            drawContext.matrices.scale(scale, scale, scale)
+            val y = (index * textRenderer.fontHeight + 5) + 6 * index
+
+            val timeLeft = powerup.getTimeLeft(player)
+            val text = if (timeLeft < 0) {
+                " ${powerup.id.replaceFirstChar { it.uppercaseChar() }} "
+            } else {
+                " ${powerup.id.replaceFirstChar { it.uppercaseChar() }} ${powerup.getTimeLeft(player)} "
+            }
+
+            drawContext.drawTextWithShadow(textRenderer, text, 0, y , -1)
+            drawContext.fill(
+                0,
+                y - 3,
+                textRenderer.getWidth(text),
+                textRenderer.fontHeight + y + 3,
+                -1072689136
+            )
+            drawContext.matrices.pop()
+        }
     }
 
     private fun renderCoins(drawContext: DrawContext, textRenderer: TextRenderer): Int {
