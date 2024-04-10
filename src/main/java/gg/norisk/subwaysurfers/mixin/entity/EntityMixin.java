@@ -2,7 +2,6 @@ package gg.norisk.subwaysurfers.mixin.entity;
 
 import gg.norisk.subwaysurfers.common.collectible.Jetpack;
 import gg.norisk.subwaysurfers.subwaysurfers.SubwaySurferKt;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.MovementType;
@@ -22,24 +21,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class EntityMixin {
     @Shadow
     private EntityDimensions dimensions;
-  
-    @Shadow public abstract void setPos(double d, double e, double f);
 
-    @Shadow public abstract void setBoundingBox(Box box);
+    @Shadow
+    public abstract void setPos(double d, double e, double f);
 
-    @Shadow protected abstract Box calculateBoundingBox();
+    @Shadow
+    public abstract void setBoundingBox(Box box);
 
-    @Shadow public abstract double getX();
+    @Shadow
+    protected abstract Box calculateBoundingBox();
 
-    @Shadow public abstract double getY();
+    @Shadow
+    public abstract double getX();
 
-    @Shadow public abstract double getZ();
+    @Shadow
+    public abstract double getY();
 
-    @Shadow public abstract void setPosition(double d, double e, double f);
+    @Shadow
+    public abstract double getZ();
+
+    @Shadow
+    public abstract void setPosition(double d, double e, double f);
 
     @Inject(method = "setPosition(DDD)V", at = @At("HEAD"), cancellable = true)
     public void setPosition(double x, double y, double z, CallbackInfo ci) {
-        if ((Object) this instanceof ClientPlayerEntity player) {
+        if ((Object) this instanceof PlayerEntity player) {
             if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
                 ci.cancel();
                 setPos(x, Jetpack.INSTANCE.getY(player, y), z);
@@ -59,7 +65,7 @@ public abstract class EntityMixin {
 
     @Inject(method = "move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V", at = @At("HEAD"), cancellable = true)
     private void moveInjection(MovementType movementType, Vec3d vec3d, CallbackInfo ci) {
-        if ((Object) this instanceof ClientPlayerEntity player) {
+        if ((Object) this instanceof PlayerEntity player) {
             if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
                 ci.cancel();
                 setPosition(getX() + vec3d.x, getY() + vec3d.y, getZ() + vec3d.z);
@@ -69,7 +75,7 @@ public abstract class EntityMixin {
 
     @Inject(method = "hasNoGravity", at = @At("HEAD"), cancellable = true)
     private void hasNoGravityInjection(CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ClientPlayerEntity player) {
+        if ((Object) this instanceof PlayerEntity player) {
             if (SubwaySurferKt.isSubwaySurfers(player) && Jetpack.INSTANCE.isActiveFor(player)) {
                 cir.setReturnValue(true);
             }

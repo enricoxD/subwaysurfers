@@ -1,8 +1,10 @@
 package gg.norisk.subwaysurfers.common.collectible
 
 import gg.norisk.subwaysurfers.subwaysurfers.isSubwaySurfers
+import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.EquipmentSlot
@@ -31,7 +33,8 @@ open class Powerup(
     val isArmor: Boolean = true,
 ) : Collectible(id) {
     /** data tracker that is synced from server to client to indicate until when a power-up will last */
-    val endTimestampTracker: TrackedData<Long> = DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.LONG)
+    val endTimestampTracker: TrackedData<Long> =
+        DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.LONG)
 
     override fun onPickupServer(player: ServerPlayerEntity) {
         val duration = calculateDuration(player)
@@ -53,15 +56,19 @@ open class Powerup(
     open fun onTickServer(player: ServerPlayerEntity) {}
 
     init {
-        ClientTickEvents.END_CLIENT_TICK.register {
-            if (it.player?.hasPowerUp(this) == true) {
-                onTickClient(MinecraftClient.getInstance().player!!)
+        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
+            ClientTickEvents.END_CLIENT_TICK.register {
+                if (it.player?.hasPowerUp(this) == true) {
+                    onTickClient(MinecraftClient.getInstance().player!!)
+                }
             }
         }
-        ServerTickEvents.START_SERVER_TICK.register { server ->
-            server.players.forEach {
-                if (it.hasPowerUp(this)) {
-                    onTickServer(it)
+        if (FabricLoader.getInstance().environmentType == EnvType.SERVER || FabricLoader.getInstance().isDevelopmentEnvironment) {
+            ServerTickEvents.START_SERVER_TICK.register { server ->
+                server.players.forEach {
+                    if (it.hasPowerUp(this)) {
+                        onTickServer(it)
+                    }
                 }
             }
         }
