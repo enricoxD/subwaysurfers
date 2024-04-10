@@ -75,6 +75,10 @@
 		"thirdperson_lefthand": {
 			"rotation": [0, -85, -50],
 			"translation": [8, -1.25, 5.25]
+		},
+		"gui": {
+			"rotation": [7, -90, 0],
+			"translation": [0.5, 2.75, 0]
 		}
 	},
 	"groups": [
