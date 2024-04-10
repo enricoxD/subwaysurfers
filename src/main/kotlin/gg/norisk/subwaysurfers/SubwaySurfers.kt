@@ -18,6 +18,7 @@ import gg.norisk.subwaysurfers.registry.*
 import gg.norisk.subwaysurfers.server.ServerConfig
 import gg.norisk.subwaysurfers.server.command.ServerDebugCommands
 import gg.norisk.subwaysurfers.server.command.StartCommand
+import gg.norisk.subwaysurfers.server.command.StructureCommand
 import gg.norisk.subwaysurfers.server.listener.BasicListener
 import gg.norisk.subwaysurfers.server.listener.MovementInputListener
 import gg.norisk.subwaysurfers.server.listener.ScreenListener
@@ -58,6 +59,7 @@ object SubwaySurfers : ModInitializer, ClientModInitializer, DedicatedServerModI
             ScreenListener.init()
             MovementInputListener.init()
             ServerDebugCommands.init()
+            StructureCommand.init()
         }
 
         Collectibles.register() // register entities, items etc. for surfer items

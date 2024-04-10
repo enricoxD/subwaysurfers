@@ -12,7 +12,8 @@
     "entity.LivingEntityMixin",
     "entity.player.PlayerEntityMixin",
     "server.network.ServerPlayNetworkHandlerMixin",
-    "world.WorldAccessor"
+    "world.WorldAccessor",
+    "structure.StructureTemplateMixin"
   ],
   "client": [
     "client.IrisMixin",
@@ -27,8 +28,7 @@
     "client.render.WorldRendererMixin",
     "client.render.entity.IronGolemEntityRendererMixin",
     "client.render.entity.LivingEntityRendererMixin",
-    "client.render.entity.PlayerEntityRendererMixin",
-    "client.structure.StructureTemplateMixin"
+    "client.render.entity.PlayerEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

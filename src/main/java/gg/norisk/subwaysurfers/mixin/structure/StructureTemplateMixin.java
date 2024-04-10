@@ -1,4 +1,4 @@
-package gg.norisk.subwaysurfers.mixin.client.structure;
+package gg.norisk.subwaysurfers.mixin.structure;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -11,8 +11,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidFillable;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.FluidState;
@@ -49,6 +47,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static software.bernie.geckolib.util.ClientUtils.getClientPlayer;
 
 @Mixin(StructureTemplate.class)
 public abstract class StructureTemplateMixin implements ModifiedStructureTemplate {
@@ -97,8 +97,10 @@ public abstract class StructureTemplateMixin implements ModifiedStructureTemplat
                     entity.refreshPositionAndAngles(vec3d2.x, vec3d2.y, vec3d2.z, f, entity.getPitch());
                     if (entity instanceof UUIDMarker uuidMarker) {
                         //TODO this is fine for now ig
-                        if (MinecraftClient.getInstance().player != null) {
-                            uuidMarker.setOwner(MinecraftClient.getInstance().player.getUuid());
+                        if (world.isClient) {
+                            if (getClientPlayer() != null) {
+                                uuidMarker.setOwner(getClientPlayer().getUuid());
+                            }
                         }
                     }
                     if (entity instanceof OriginMarker originMarker) {
@@ -108,8 +110,9 @@ public abstract class StructureTemplateMixin implements ModifiedStructureTemplat
                     if (entities != null) {
                         entities.add(entity);
                     } else {
-                        if (world instanceof ClientWorld clientWorld) {
-                            clientWorld.addEntity(entity);
+                        if (world.isClient) {
+                            //broken lol
+                            //ClientUtils.getLevel().addEntity(entity);
                         }
                         entity.streamSelfAndPassengers().forEach(world::spawnEntity);
                     }

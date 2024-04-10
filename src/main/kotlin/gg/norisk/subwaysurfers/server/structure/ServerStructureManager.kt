@@ -1,5 +1,6 @@
 package gg.norisk.subwaysurfers.server.structure
 
+import gg.norisk.subwaysurfers.SubwaySurfers.logger
 import gg.norisk.subwaysurfers.common.structure.StructureManager
 import gg.norisk.subwaysurfers.worldgen.pattern.RailPattern
 import net.minecraft.datafixer.DataFixTypes
@@ -20,13 +21,19 @@ object ServerStructureManager : StructureManager {
     }
 
     fun createStructure(railPattern: RailPattern, file: File) {
-        val nbtCompound = run { NbtIo.readCompressed(file.inputStream(), NbtSizeTracker.ofUnlimitedBytes()) }
-        val structureTemplate = StructureTemplate()
-        val i = NbtHelper.getDataVersion(nbtCompound, 500)
-        structureTemplate.readNbt(
-            Registries.BLOCK.readOnlyWrapper,
-            DataFixTypes.STRUCTURE.update(Schemas.getFixer(), nbtCompound, i)
-        )
-        structures[railPattern.railName] = structureTemplate
+        runCatching {
+            logger.info("Loading $file")
+            NbtIo.readCompressed(file.inputStream(), NbtSizeTracker.ofUnlimitedBytes())
+        }.onSuccess {
+            val structureTemplate = StructureTemplate()
+            val i = NbtHelper.getDataVersion(it, 500)
+            structureTemplate.readNbt(
+                Registries.BLOCK.readOnlyWrapper, DataFixTypes.STRUCTURE.update(Schemas.getFixer(), it, i)
+            )
+            structures[railPattern.railName] = structureTemplate
+        }.onFailure {
+            logger.error("Error loading $file $railPattern")
+            it.printStackTrace()
+        }
     }
 }
