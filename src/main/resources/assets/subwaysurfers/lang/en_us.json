@@ -24,5 +24,8 @@
   "download.no-updates": "No updates found :)!",
   "download.found-updates": "Found %s updates!",
   "download.successful": "Successfully downloaded %s",
-  "download.error": "Error downloading %s"
+  "download.error": "Error downloading %s",
+  "download.initial": "Initial setup...",
+  "download.already": "You have already downloaded %s tracks",
+  "structure_block.button.save_and_upload": "Save & Upload"
 }

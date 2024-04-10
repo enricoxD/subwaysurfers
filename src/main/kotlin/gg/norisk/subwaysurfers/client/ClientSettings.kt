@@ -24,7 +24,9 @@ object ClientSettings : ClientTickEvents.EndTick {
     var startPos: Vec3d? = null
     var ridingTicks = 0
     val baseFolder = File("config", "subwaysurfers/maps").apply { mkdirs() }
+    var isInitial = true
 
+    //TODO maybe das downloaden reworken wenn es laggen sollte?
     fun init() {
         WorldEvents.clientJoinWorldEvent.listen { event ->
             disable()
@@ -39,6 +41,7 @@ object ClientSettings : ClientTickEvents.EndTick {
         }
 
         trackListPacketS2C.receiveOnClient { packet, context ->
+            isInitial = baseFolder.listFiles()?.isEmpty() ?: true
             checkTrackList(packet)
         }
 
@@ -68,10 +71,17 @@ object ClientSettings : ClientTickEvents.EndTick {
 
     private fun checkTrackList(trackList: List<TrackInfo>) {
         val player = MinecraftClient.getInstance().player ?: return
-        player.sendMessage(literalText {
-            text(prefix)
-            text(Text.translatable("download.checking-for-updates"))
-        })
+        if (isInitial) {
+            player.sendMessage(literalText {
+                text(prefix)
+                text(Text.translatable("download.initial"))
+            })
+        } else {
+            player.sendMessage(literalText {
+                text(prefix)
+                text(Text.translatable("download.checking-for-updates"))
+            })
+        }
         val toDownload = mutableListOf<TrackInfo>()
         for (trackInfo in trackList) {
             val file = File(baseFolder, "${trackInfo.name}.nbt")
@@ -87,10 +97,12 @@ object ClientSettings : ClientTickEvents.EndTick {
                 text(Text.translatable("download.found-updates", toDownload.size))
             })
             for (trackInfo in toDownload) {
-                player.sendMessage(literalText {
-                    text(" - ")
-                    text(trackInfo.name)
-                })
+                if (!isInitial) {
+                    player.sendMessage(literalText {
+                        text(" - ")
+                        text(trackInfo.name)
+                    })
+                }
             }
             trackListRequestPacketC2S.send(toDownload)
         } else {
@@ -104,15 +116,17 @@ object ClientSettings : ClientTickEvents.EndTick {
     private fun downloadTrack(templatePacket: TemplatePacket) {
         val player = MinecraftClient.getInstance().player ?: return
         runCatching {
-            println("Received ${templatePacket.path} ${templatePacket.bytes.size}")
+            logger.info("Received ${templatePacket.path} ${templatePacket.bytes.size}")
             File(baseFolder, "${templatePacket.path}.nbt").writeBytes(templatePacket.bytes)
         }.onSuccess {
-            player.sendMessage(literalText {
-                text(prefix)
-                color = 0x89ff21
-                text(Text.translatable("download.successful", templatePacket.path))
-                text(" [${templatePacket.bytes.size}]") { }
-            })
+            if (!isInitial) {
+                player.sendMessage(literalText {
+                    text(prefix)
+                    color = 0x89ff21
+                    text(Text.translatable("download.successful", templatePacket.path))
+                    text(" [${templatePacket.bytes.size}]") { }
+                })
+            }
         }.onFailure {
             player.sendMessage(literalText {
                 text(prefix)

@@ -16,6 +16,8 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.text.Text
+import net.silkmc.silk.core.text.literalText
 import java.io.File
 import java.util.*
 import kotlin.math.absoluteValue
@@ -34,6 +36,7 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
 
     //TODO das clearen wenn spieler leaved etc vergess ich eh lol
     val playerPatterns = mutableMapOf<UUID, List<RailPattern>>()
+    val onlinePlayers = mutableMapOf<UUID, Int>()
 
     fun init() {
         ServerTickEvents.END_WORLD_TICK.register(this)
@@ -45,6 +48,13 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
     }
 
     private fun handleTrackListRequest(tracks: List<TrackInfo>, player: ServerPlayerEntity) {
+        //kann nicht einschätzen ob das laggt wenn man das dann so mäßig spammt you know lol?
+        if (onlinePlayers[player.uuid] != 0) {
+            player.sendMessage(literalText {
+                text(Text.translatable("download.already", onlinePlayers[player.uuid]))
+            })
+            return
+        }
         val railList =
             rails.filter { (it.railName in tracks.map { requestedTrack -> requestedTrack.name }) && (it.hash in tracks.map { requestedTrack -> requestedTrack.hash }) }
                 .map { TrackHolder(it.file, it.railName, it.hash) }.toMutableList()
@@ -57,6 +67,7 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
     }
 
     private fun sendTracksToPlayer(playerEntity: ServerPlayerEntity, tracks: List<TrackHolder>) {
+        onlinePlayers[playerEntity.uuid] = tracks.size
         for (track in tracks) {
             templatePacketS2C.send(TemplatePacket(track.file.readBytes(), track.name), playerEntity)
         }
@@ -147,14 +158,18 @@ object PatternManager : ServerTickEvents.EndWorldTick, ServerEntityEvents.Load, 
 
     override fun onLoad(entity: Entity, world: ServerWorld) {
         val player = entity as? ServerPlayerEntity ?: return
-        val railList = rails.map { TrackInfo(it.railName, it.hash) }.toMutableList()
-        val sideList = sides.map { it.first }
-        railList.addAll(sideList)
-        trackListPacketS2C.send(railList, player)
+        if (!onlinePlayers.contains(entity.uuid)) {
+            onlinePlayers[entity.uuid] = 0
+            val railList = rails.map { TrackInfo(it.railName, it.hash) }.toMutableList()
+            val sideList = sides.map { it.first }
+            railList.addAll(sideList)
+            trackListPacketS2C.send(railList, player)
+        }
     }
 
     override fun onUnload(entity: Entity, world: ServerWorld) {
         val player = entity as? ServerPlayerEntity ?: return
         playerPatterns.remove(player.uuid)
+        onlinePlayers.remove(entity.uuid)
     }
 }
