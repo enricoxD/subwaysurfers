@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.22"
-    id("fabric-loom") version "1.4-SNAPSHOT"
+    id("fabric-loom") version "1.5-SNAPSHOT"
     kotlin("plugin.serialization") version "1.8.22"
     `maven-publish`
     java
@@ -8,6 +8,7 @@ plugins {
 
 val mcVersion = "1.20.4"
 val silkVersion = "1.10.3"
+val cloudNetVersion = "4.0.0-RC10"
 
 group = "gg.norisk"
 version = "${mcVersion}-1.1.0"
@@ -28,6 +29,7 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    maven("https://repo.cloudnetservice.eu/repository/releases/")
 }
 
 dependencies {
@@ -45,6 +47,13 @@ dependencies {
     modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:1.0.2-rc1+1.20")
     modImplementation("io.wispforest:owo-lib:0.12.5+1.20.3")
     modCompileOnly("maven.modrinth:iris:1.6.17+1.20.4")
+
+    // LuckPerms
+    compileOnly("net.luckperms:api:5.4")
+
+    // CloudNet
+    modCompileOnly("eu.cloudnetservice.cloudnet:driver:$cloudNetVersion")
+    modCompileOnly("eu.cloudnetservice.cloudnet:bridge:$cloudNetVersion")
 }
 
 loom {
