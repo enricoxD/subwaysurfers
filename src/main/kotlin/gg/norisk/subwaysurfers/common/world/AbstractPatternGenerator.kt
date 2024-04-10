@@ -69,13 +69,15 @@ abstract class AbstractPatternGenerator(
         handleStructurePlacement(player)
     }
 
-    open fun onPlace(player: PlayerEntity) {}
+    open fun onPlace(player: PlayerEntity, toPlace: StructureTemplate, placePos: BlockPos) {
+    }
 
     private fun handleStructurePlacement(player: PlayerEntity) {
         val toPlace = currentStructure ?: return
         if (nextZ < getGenerationPos(player, toPlace)) {
             val xOffset = calculateXOffset(toPlace)
 
+            val placePos = BlockPos(startPos.x + xOffset, startPos.y, nextZ)
             structureManager.placeStructure(
                 player,
                 BlockPos(startPos.x + xOffset, startPos.y, nextZ),
@@ -86,7 +88,7 @@ abstract class AbstractPatternGenerator(
                 entitiesToPlace
             )
 
-            onPlace(player)
+            onPlace(player, toPlace, placePos)
 
             nextZ += toPlace.size.z
 
