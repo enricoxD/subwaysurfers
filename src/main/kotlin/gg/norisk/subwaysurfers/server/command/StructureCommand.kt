@@ -23,11 +23,11 @@ object StructureCommand {
             literal("upload") {
                 argument<String>("templatename", StringArgumentType.greedyString()) { templateName ->
                     runs {
-                        val localStructureFile = getStructureFile(templateName())
+                        val localStructureFile = File("world/generated/minecraft/structures/${templateName()}.nbt")
                         val folder = Paths.get(PATH).toFile()
 
                         val railsFolder = File(folder, "rails")
-                        val structureFile = File(railsFolder, localStructureFile.path)
+                        val structureFile = File(railsFolder, localStructureFile.path.substringAfterLast("structures/"))
                         structureFile.parentFile.mkdirs()
                         structureFile.createNewFile()
                         structureFile.writeBytes(localStructureFile.readBytes())
@@ -44,11 +44,11 @@ object StructureCommand {
             literal("delete") {
                 argument<String>("templatename", StringArgumentType.greedyString()) { templateName ->
                     runs {
-                        val localStructureFile = getStructureFile(templateName())
+                        val localStructureFile = File("world/generated/minecraft/structures/${templateName()}.nbt")
                         val folder = Paths.get(PATH).toFile()
 
                         val railsFolder = File(folder, "rails")
-                        val structureFile = File(railsFolder, localStructureFile.path)
+                        val structureFile = File(railsFolder, localStructureFile.path.substringAfterLast("structures/"))
                         if (structureFile.exists()) {
                             structureFile.delete()
                         }
@@ -63,11 +63,6 @@ object StructureCommand {
                 }
             }
         }
-    }
-
-    private fun getStructureFile(templateName: String): File {
-        val localStructureFile = File("world/generated/minecraft/structures/${templateName}.nbt")
-        return Paths.get(localStructureFile.absolutePath.substringAfterLast("structures/")).toFile()
     }
 
     fun handleStructureBlockSaveMessage(player: ServerPlayerEntity, templateName: String) {
