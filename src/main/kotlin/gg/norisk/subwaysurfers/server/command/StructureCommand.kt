@@ -2,24 +2,27 @@ package gg.norisk.subwaysurfers.server.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import gg.norisk.subwaysurfers.utils.ChatUtils.prefix
+import gg.norisk.subwaysurfers.utils.CloudNetUtils
+import gg.norisk.subwaysurfers.utils.hasPermission
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.ClickEvent
 import net.silkmc.silk.commands.PermissionLevel
 import net.silkmc.silk.commands.command
-import net.silkmc.silk.core.text.literal
 import net.silkmc.silk.core.text.literalText
 import java.io.File
 import java.nio.file.Paths
 
 object StructureCommand {
-    //TODO permission check
     //LOKL
     private const val PATH = "/home/mcuser/cloudnet/local/templates/subwaysurfers/default/config/subwaysurfers/nbt"
 
     //lol experimental for hglabor builders only :3 <3
     fun init() {
         command("structure") {
-            //TODO hier luckperms/cloudnet permission (eig nur luckperms oder einbinden)
+            requires { source -> source.playerOrThrow.hasPermission("hglabor.subwaysurfers.structures") }
             requiresPermissionLevel(PermissionLevel.OWNER)
             literal("upload") {
                 argument<String>("templatename", StringArgumentType.greedyString()) { templateName ->
@@ -39,6 +42,12 @@ object StructureCommand {
                                 color = 0x89ff21
                             }
                         })
+                        CloudNetUtils.broadcastMessage(
+                            Component.text("[SubwaySurfers] ").color(TextColor.color(0xf0a211))
+                                .append(Component.text(source.name).color(NamedTextColor.RED))
+                                .append(Component.text("created structure ")).color(NamedTextColor.GRAY)
+                                .append(Component.text(templateName())).color(NamedTextColor.DARK_RED)
+                        )
                     }
                 }
             }
