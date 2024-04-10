@@ -62,7 +62,7 @@ object InGameHud : HudRenderCallback {
             val text = if (timeLeft < 0) {
                 " ${powerup.id.replaceFirstChar { it.uppercaseChar() }} "
             } else {
-                " ${powerup.id.replaceFirstChar { it.uppercaseChar() }} ${powerup.getTimeLeft(player)} "
+                " \uD83D\uDD51 ${powerup.id.replaceFirstChar { it.uppercaseChar() }} ${powerup.getTimeLeft(player)} "
             }
 
             drawContext.drawTextWithShadow(textRenderer, text, 0, y , -1)
