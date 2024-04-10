@@ -19,6 +19,7 @@ object StructureCommand {
     //lol experimental for hglabor builders only :3 <3
     fun init() {
         command("structure") {
+            //TODO hier luckperms/cloudnet permission (eig nur luckperms oder einbinden)
             requiresPermissionLevel(PermissionLevel.OWNER)
             literal("upload") {
                 argument<String>("templatename", StringArgumentType.greedyString()) { templateName ->
