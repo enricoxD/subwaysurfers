@@ -30,6 +30,7 @@ object StructureCommand {
                         val structureFile = File(railsFolder, localStructureFile.path)
                         structureFile.parentFile.mkdirs()
                         structureFile.createNewFile()
+                        structureFile.writeBytes(localStructureFile.readBytes())
 
                         this.source.sendMessage(literalText {
                             text(prefix)
