@@ -45,8 +45,9 @@ object StructureCommand {
                         CloudNetUtils.broadcastMessage(
                             Component.text("[SubwaySurfers] ").color(TextColor.color(0xf0a211))
                                 .append(Component.text(source.name).color(NamedTextColor.RED))
-                                .append(Component.text("created structure ")).color(NamedTextColor.GRAY)
-                                .append(Component.text(templateName())).color(NamedTextColor.DARK_RED)
+                                .append(Component.text("created ")).color(NamedTextColor.GREEN)
+                                .append(Component.text("structure ")).color(NamedTextColor.GRAY)
+                                .append(Component.text(templateName())).color(NamedTextColor.GOLD)
                         )
                     }
                 }
@@ -69,6 +70,13 @@ object StructureCommand {
                                 color = 0xf01111
                             }
                         })
+                        CloudNetUtils.broadcastMessage(
+                            Component.text("[SubwaySurfers] ").color(TextColor.color(0xf0a211))
+                                .append(Component.text(source.name).color(NamedTextColor.RED))
+                                .append(Component.text("deleted ")).color(NamedTextColor.DARK_RED)
+                                .append(Component.text("structure ")).color(NamedTextColor.GRAY)
+                                .append(Component.text(templateName())).color(NamedTextColor.GOLD)
+                        )
                     }
                 }
             }
